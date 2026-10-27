@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173d39"><meta name="description" content="Fotografie verstehen: ein interaktives Labor für Belichtung, Optik, Sensorformate und Schärfentiefe. Mit Experimenten für Unterricht und Selbststudium.">
+<title>Fotolabor — Licht verstehen</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#" aria-label="Fotolabor Start"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 28 10v13l-12 7L4 23V10Z"/><circle cx="16" cy="16" r="7"/><path d="m16 9 6 10H10Z"/></svg><span>Fotolabor<small>LICHT VERSTEHEN</small></span></a><nav aria-label="Hauptnavigation"><button class="nav active" data-page="lab">Labor</button><button class="nav" data-page="learn">Experimente <span>08</span></button><button class="nav" data-page="atlas">Kamera-Atlas</button><button class="nav" data-page="about">Konzept & Quellen</button></nav><button id="present" class="quiet" title="Größere Darstellung für den Unterricht">Präsentieren ↗</button></header>
+<main>
+<section id="page-lab" class="page">
+<div class="intro"><div><p class="eyebrow">INTERAKTIVES FOTOGRAFIE-LABOR · V1</p><h1>Ein Parameter. Ein Aha-Moment.</h1><p>Verändere die Kamera. Beobachte das Licht. Verstehe das Bild.</p></div><div class="intro-actions"><button id="reset" class="quiet">↺ Zurücksetzen</button><button id="share" class="primary">Versuch teilen ↗</button></div></div>
+<div class="lab-layout">
+<aside class="panel controls" aria-label="Kamera und Aufnahme einstellen">
+<div class="panel-title"><span class="step">01</span><h2>Deine Kamera</h2><span class="tag">MODULAR</span></div>
+<label class="field">Sensorformat<select id="sensor"></select></label>
+<p id="camera-note" class="micro"></p>
+<div class="field pair"><label>Bauart<select id="body"><option value="mirrorless">Spiegellos</option><option value="dslr">DSLR</option></select></label><label>Modus<select id="mode"><option value="M">M · Manuell</option><option value="A">A / Av · Blende</option><option value="S">S / Tv · Zeit</option></select></label></div>
+<label class="check"><input type="checkbox" id="matchFrame" checked> Bildausschnitt bei Formatwechsel halten</label>
+<div class="lens-presets" aria-label="Objektiv wählen"><button data-focal="24">24 mm</button><button data-focal="35">35 mm</button><button data-focal="50" class="selected">50 mm</button><button data-focal="85">85 mm</button><button data-focal="135">135 mm</button></div>
+<div id="main-controls"></div>
+<div class="control-explainer" id="control-explainer" aria-live="polite"><b>Blende</b><p>Eine größere Öffnung lässt mehr Licht durch und macht den scharf erscheinenden Bereich schmaler.</p></div>
+<details><summary>Weitere Kameraeinstellungen</summary><div id="advanced-controls"></div><label class="field">Schärfemaßstab<select id="cocMode"><option value="standard">Standard · Sensordiagonale / 1500</option><option value="pixel">Streng · 2 Pixel</option></select></label><label class="check"><input id="tripod" type="checkbox" checked> Stativ</label><label class="check"><input id="stabilization" type="checkbox" checked> Stabilisierung (Lehrmodell)</label><label class="check"><input id="portrait" type="checkbox"> Smartphone-Porträteffekt (schematisch)</label></details>
+</aside>
+<div class="workspace">
+<section class="panel viewer-panel">
+<div class="viewer-head"><div class="tabs" role="tablist" aria-label="Laboransicht"><button id="tab-photo" class="active" role="tab" aria-selected="true" data-view="photo">Aufnahmebild</button><button id="tab-optics" role="tab" aria-selected="false" data-view="optics">Strahlengang</button><button id="tab-space" role="tab" aria-selected="false" data-view="space">Raum & Fokus</button><button id="tab-sensor" role="tab" aria-selected="false" data-view="sensor">Sensorvergleich</button></div><span class="live"><i></i> LIVE</span></div>
+<div class="view-area" id="view-area"><canvas id="canvas" width="1000" height="600" aria-label="Simulierte Aufnahme. Alle Einstellungen und Ergebnisse sind auch als Text unterhalb verfügbar."></canvas><div class="view-badge" id="view-badge">SYNTHETISCHE SZENE · OPTISCHES LEHRMODELL</div><div class="photo-settings" id="photo-settings"></div></div>
+<div id="view-caption" class="view-caption"></div>
+<div class="viewer-toolbar"><div class="toggles"><label><input id="grid" type="checkbox" checked> Drittelraster</label><label><input id="peaking" type="checkbox"> Fokusmarken</label><label><input id="zebra" type="checkbox"> Lichterwarnung</label><label><input id="motion" type="checkbox"> Animation</label></div><button id="snapshot" class="quiet">A speichern</button><button id="compare" class="quiet" disabled>A / B vergleichen</button><button id="download" class="quiet" title="Aktuelle Ansicht als PNG herunterladen">↓ PNG</button></div>
+</section>
+<section class="metrics" id="metrics" aria-label="Berechnete Aufnahmeparameter"></section>
+<section class="panel scene-panel"><div class="panel-title"><span class="step">02</span><h2>Dein Motivraum</h2><select id="scene" aria-label="Szenario"><option value="courtyard">Innenhof · Tageslicht</option><option value="night">Innenhof · Nacht</option><option value="studio">Studio · Kunstlicht</option></select></div><div id="scene-controls" class="scene-controls"></div><div class="scene-bottom"><p><span class="dot focus-dot"></span> Türkis: Fokus &nbsp; <span class="dot light-dot"></span> Bernstein: Licht &nbsp; <span class="dot subject-dot"></span> Koralle: Motiv</p><button id="focus-subject" class="quiet">Auf Person fokussieren</button></div></section>
+<div class="insight" id="insight" aria-live="polite"></div>
+</div>
+</div>
+<section class="next-lesson"><div><p class="eyebrow">VOM AUSPROBIEREN ZUM VERSTEHEN</p><h2>Was willst du heute sichtbar machen?</h2></div><button data-experiment="aperture">01 · Blende & Schärfentiefe ↗</button><button data-experiment="motion">02 · Bewegung einfrieren ↗</button><button data-experiment="crop">03 · Sensor & Bildwinkel ↗</button></section>
+</section>
+<section id="page-learn" class="page" hidden></section>
+<section id="page-atlas" class="page" hidden></section>
+<section id="page-about" class="page" hidden></section>
+</main>
+<footer><span>Fotolabor · Ein offenes Lehrkonzept für digitale Fotografie</span><span>Eigenständiges Seminarprojekt · keine offizielle HSG-Webseite</span><button class="quiet" data-page="about">Modellgrenzen & Quellen ↗</button></footer>
+<dialog id="lesson-dialog"><form method="dialog"><button class="close" aria-label="Schließen">×</button></form><div id="lesson-content"></div></dialog>
+<dialog id="compare-dialog"><form method="dialog"><button class="close" aria-label="Schließen">×</button></form><p class="eyebrow">GLEICHER RAUM · ANDERE EINSTELLUNGEN</p><h2>A / B vergleichen</h2><div class="comparison"><figure><canvas id="compare-a" width="700" height="470"></canvas><figcaption id="compare-a-caption"></figcaption></figure><figure><canvas id="compare-b" width="700" height="470"></canvas><figcaption id="compare-b-caption"></figcaption></figure></div><p class="micro">Beide Bilder zeigen denselben Bewegungszeitpunkt. Der Vergleich wird lokal in diesem Browser gehalten.</p></dialog>
+<div id="toast" role="status"></div>
+<script type="module" src="app.mjs"></script>
+</body></html>
