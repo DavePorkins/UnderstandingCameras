@@ -4,7 +4,7 @@ import {drawCutaway,drawRoom} from './camera-view.mjs';
 import {stateRows,comparisonRows} from './state-info.mjs';
 import {lessons,learnPage,aboutPage,atlasPage} from './content.mjs';
 import {qrcode} from './vendor/qrcode.mjs';
-import {readGallery,writeGallery} from './gallery.mjs';
+import {readGallery,writeGallery,exportGallery,importGallery} from './gallery.mjs';
 const $=id=>document.getElementById(id);
 let state=location.hash.startsWith('#s=')?decodeState(location.hash):{...defaults};
 let saved=null,photoHit=null,spaceHit=null,cameraHit=null,drag=null,activeLesson=null,needsRender=true,activeControl='aperture',motionTarget='ballSpeed',roomSelected='person',settingsTab='base',simTime=0,lastTime=0,lastTick=performance.now();
@@ -117,6 +117,9 @@ $('take-photo').onclick=()=>{const cv=document.createElement('canvas'),m=metrics
 $('gallery-open').onclick=()=>{galleryHTML();$('gallery-dialog').showModal();};
 $('gallery-grid').onchange=e=>{const id=e.target.dataset.gallerySelect;if(!id)return;e.target.checked?gallerySelection.add(id):gallerySelection.delete(id);$('gallery-compare').disabled=gallerySelection.size!==2;};
 $('gallery-grid').onclick=e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.galleryLoad||b.dataset.galleryExport||b.dataset.galleryDelete,p=photos.find(p=>p.id===id);if(!p)return;if(b.dataset.galleryLoad){state=structuredClone(p.state);simTime=p.time;state.motion=false;activeLesson=null;update();$('gallery-dialog').close();toast('Aufnahmeeinstellungen geladen.');}else if(b.dataset.galleryDelete){if(persistPhotos(photos.filter(x=>x.id!==id)))galleryHTML();}else{const cv=document.createElement('canvas'),m=metrics(p.state);cv.width=1440;cv.height=Math.round(1440*m.sensor.h/m.sensor.w);drawPhoto(cv,{...p.state,motion:false},p.time,{clean:true});cv.toBlob(blob=>{if(!blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fotolabor-'+id+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});}};
+$('gallery-backup-export').onclick=()=>{const blob=new Blob([exportGallery(photos)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kamera-galerie.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);};
+$('gallery-backup-import').onclick=()=>$('gallery-import-file').click();
+$('gallery-import-file').onchange=async()=>{const file=$('gallery-import-file').files[0];if(!file)return;try{if(file.size>18000000)throw new Error('Die Galerie-Datei ist zu groß.');const next=importGallery(await file.text(),photos);if(persistPhotos(next)){galleryHTML();toast('Galerie importiert.');}}catch{toast('Galerie konnte nicht importiert werden. Bitte eine gültige Sicherung mit höchstens 20 Aufnahmen wählen.');}$('gallery-import-file').value='';};
 $('gallery-compare').onclick=()=>{if(gallerySelection.size!==2)return;const [a,b]=[...gallerySelection].map(id=>photos.find(p=>p.id===id));showComparison(a.state,b.state,a.time,b.time);};
 function fitWorkspace(){const scale=Math.min(1,innerWidth/1120,innerHeight/700);document.documentElement.style.setProperty('--workspace-scale',scale);document.documentElement.style.setProperty('--workspace-height',`${innerHeight/scale}px`);requestAnimationFrame(resize);}
 window.addEventListener('resize',fitWorkspace);fitWorkspace();
