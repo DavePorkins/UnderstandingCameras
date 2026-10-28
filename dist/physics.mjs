@@ -1,3 +1,4 @@
+import {pupilTransmission,pupilSection} from './pupil.mjs';
 // Units: millimetres for optics, metres for the scene, seconds for time.
 export const sensors = {
  full: {name:'Vollformat',w:36,h:24,mp:24,baseISO:100,example:'Sony α7 · Canon EOS R · Nikon Z (Formatbeispiele)'},
@@ -11,7 +12,7 @@ export const apertures=[1.4,2,2.8,4,5.6,8,11,16,22];
 export const shutters=[8000,6400,5000,4000,3200,2500,2000,1600,1250,1000,800,640,500,400,320,250,200,160,125,100,80,60,50,40,30,25,20,15,13,10,8,6,5,4,3,2.5,2,1.6,1.3,1].map(n=>1/n).concat([1.3,1.6,2]);
 export const focalStops=[2,2.8,4,6.8,8.8,12,14,18,20,24,28,33,35,50,70,85,105,135,200];
 export const isos=[100,200,400,800,1600,3200,6400,12800];
-export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:4,time:1/125,iso:100,mode:'M',autoISO:false,autoFocus:false,autoWB:false,afTarget:'person',rayTargets:'person',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,plantX:-1.2,ballX:.95,birdX:-.9,sculptureX:2,sculpture:9,speed:0,waveSpeed:3,ballSpeed:4,birdSpeed:7,ballDistance:6,birdDistance:8,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:false,scene:'courtyard',lampOn:false,windowsOn:false,lampX:-1.5,lampZ:3,lampEV:14,lampType:'street',lampAngle:0};
+export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:4,time:1/125,iso:100,mode:'M',autoISO:false,autoFocus:false,autoWB:false,afTarget:'person',rayTargets:'person',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,plantX:-1.2,ballX:.95,birdX:-.9,sculptureX:2,sculpture:9,speed:0,waveSpeed:3,ballSpeed:4,birdSpeed:7,ballDistance:6,birdDistance:8,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:false,scene:'courtyard',lampOn:false,windowsOn:false,lampX:-1.5,lampZ:3,lampEV:14,lampType:'street',lampAngle:0,pupilShape:'circle',bladeCount:7,roundedBlades:false,bokehLights:false};
 export const actors={camera:{name:'Kamera',z:'cameraBack',x:'cameraX',min:-40,max:40},person:{name:'Person',z:'subject',x:'subjectX',min:-40,max:80},plant:{name:'Pflanze',z:'foreground',x:'plantX',min:-40,max:80},ball:{name:'Ball',z:'ballDistance',x:'ballX',min:-40,max:80},bird:{name:'Vogel',z:'birdDistance',x:'birdX',min:-40,max:80},sculpture:{name:'Skulptur',z:'sculpture',x:'sculptureX',min:-40,max:80},background:{name:'Hintergrund',z:'background',min:-40,max:80},lamp:{name:'Lampe',z:'lampZ',x:'lampX',min:-40,max:80}};
 export function actorDistance(s,id){const a=actors[id]||actors.person;return id==='camera'?s.cameraBack:s[a.z]+s.cameraBack;}
 export function moveActor(s,id,z,x){const a=actors[id];if(!a)return s;const next={...s,[a.z]:clamp(id==='camera'?-z:z,a.min,a.max)};if(a.x&&Number.isFinite(x))next[a.x]=clamp(x,-15,15);return next;}
@@ -36,7 +37,7 @@ export function effective(s){
  if(out.autoWB)out.wb=out.temperature;
  if(out.sensor==='phone')out.aperture=1.8;
  if(out.autoFocus)out.focus=clamp(actorDistance(out,out.afTarget),.3,150);
- const ev=meteredEV(out)-out.nd-out.comp,low=out.sensor==='phone'?1.8:1.4,high=out.sensor==='phone'?1.8:22;
+ const ev=meteredEV(out)-out.nd-out.comp+Math.log2(pupilTransmission(out)),low=out.sensor==='phone'?1.8:1.4,high=out.sensor==='phone'?1.8:22;
  const idealISO=(N,t)=>100*N*N/(2**ev*t);
  if(out.mode==='P'){
   out.aperture=out.sensor==='phone'?1.8:4;
@@ -63,8 +64,9 @@ export function metrics(input){
  const far=H>u?h0*u/(H-u)/1000:Infinity;
  const v=f*u/(u-f);
  const evCamera=Math.log2(N*N/s.time);
- const offset=s.ev+Math.log2(s.iso/100)-s.nd-evCamera;
- const physical=2**(s.ev-s.nd)*s.time/(N*N);
+ const transmission=pupilTransmission(s);
+ const offset=s.ev+Math.log2(s.iso/100)-s.nd-evCamera+Math.log2(transmission);
+ const physical=2**(s.ev-s.nd)*s.time/(N*N)*transmission;
  const fov=2*Math.atan(sensor.w/(2*f))*180/Math.PI;
  const blurAt=(z)=>{const uz=Math.max(z,.05)*1000;return Math.abs(f*f*(uz-u)/(N*uz*(u-f)));};
  const airy=2.44*0.00055*N;
@@ -72,7 +74,7 @@ export function metrics(input){
  const photons=physical*(sensor.w*sensor.h)/(36*24);
  const noise=clamp(0.028/Math.sqrt(Math.max(photons,0.00001)),0.003,0.38);
  const motionMM=f*s.speed*s.time/Math.max(s.subject+s.cameraBack,0.1);
- return {s,sensor,crop:crop(sensor),equivalent:f*crop(sensor),coc,pixel,H:H/1000,near,far,v,offset,physical,fov,blurAt,airy,noise,motionMM,evCamera,apertureDiameter:f/N};
+ return {s,sensor,transmission,crop:crop(sensor),equivalent:f*crop(sensor),coc,pixel,H:H/1000,near,far,v,offset,physical,fov,blurAt,airy,noise,motionMM,evCamera,apertureDiameter:f/N};
 }
 export function changeSensor(s,id){
  const prev=sensors[s.sensor],next=sensors[id];
@@ -89,8 +91,9 @@ export function cameraModel(input,{distance,pointHeight=.6}={}){
  const objectY=clamp(pointHeight*1000,-objectU*.12,objectU*.12);
  const sensorZ=d-h+m.v;
  const conjugateZ=d-h+f*objectU/(objectU-f);
- const rays=[-.5,0,.5].map(q=>{
-  const irisY=q*irisDiameter;
+ const [pupilLow,pupilHigh]=pupilSection(s);
+ const rays=[0,.5,1].map(q=>{
+  const irisY=(pupilLow+(pupilHigh-pupilLow)*q)*irisDiameter/2;
   let angle=(irisY-objectY*stopFactor)/(firstDistance*stopFactor+d/2);
   const firstY=objectY+angle*firstDistance;
   angle-=firstY/g;
@@ -106,7 +109,7 @@ export function decodeState(hash){
   for(const [k,v]of Object.entries(raw)){if(!Object.hasOwn(defaults,k)||typeof v!==typeof defaults[k])continue;if(typeof v==='number'&&!Number.isFinite(v))continue;out[k]=v;}
   if(!Object.hasOwn(sensors,out.sensor))out.sensor='full';
   const limits={focal:[2,200],aperture:[1.4,22],time:[1/8000,2],iso:[100,12800],ev:[3,16],comp:[-3,3],nd:[0,10],focus:[0.3,150],subject:[1.5,15],background:[6,40],foreground:[1,8],cameraBack:[0,8],cameraX:[-3,3],subjectX:[-3,3],plantX:[-3,3],ballX:[-3,3],birdX:[-3,3],sculptureX:[-3,3],sculpture:[2,25],speed:[0,12],waveSpeed:[0,12],ballSpeed:[0,12],birdSpeed:[0,12],ballDistance:[2,18],birdDistance:[2,25],wb:[2500,10000],temperature:[2500,10000],mp:[8,100]};
-  for(const a of Object.values(actors)){limits[a.z]=[a.min,a.max];if(a.x)limits[a.x]=[-15,15];}limits.lampEV=[8,18];limits.lampAngle=[-180,180];
+  for(const a of Object.values(actors)){limits[a.z]=[a.min,a.max];if(a.x)limits[a.x]=[-15,15];}limits.bladeCount=[5,11];limits.lampEV=[8,18];limits.lampAngle=[-180,180];
   for(const[k,[a,b]]of Object.entries(limits))out[k]=clamp(out[k],a,b);
   if(!['M','A','S','P'].includes(out.mode))out.mode='M';
   if(!Object.hasOwn(actors,out.afTarget)||['camera','lamp'].includes(out.afTarget))out.afTarget='person';
@@ -114,6 +117,7 @@ export function decodeState(hash){
   if(!['standard','pixel'].includes(out.cocMode))out.cocMode='standard';
   if(!['courtyard','night','studio'].includes(out.scene))out.scene='courtyard';
   if(!['street','spot'].includes(out.lampType))out.lampType='street';
+  out.bladeCount=Math.round(out.bladeCount);if(!['circle','iris','heart','bat'].includes(out.pupilShape))out.pupilShape='circle';
   if(!['mirrorless','dslr'].includes(out.body))out.body='mirrorless';
   return out;
  }catch{return {...defaults};}

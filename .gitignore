@@ -4,3 +4,4 @@ node_modules/
 .env.*
 *.tar.gz
 *.zip
+test-output/

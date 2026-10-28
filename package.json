@@ -1,0 +1,13 @@
+{
+  "name": "kamera-verstehen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node verify.mjs",
+    "test:ui": "node verify-ui.mjs"
+  },
+  "devDependencies": {
+    "happy-dom": "21.0.4",
+    "@napi-rs/canvas": "0.1.100"
+  }
+}

@@ -26,7 +26,7 @@ export function initMobile({onResize,onControl,onRoomSelect,onSettings}){
  byId('mobile-tabs').onclick=e=>{const b=e.target.closest('[data-mobile-tab]');if(b)selectTab(b.dataset.mobileTab);};
  byId('mobile-tabs').onkeydown=e=>{const keys=['controls','camera','room','light'];let i=keys.indexOf(tab);if(e.key==='ArrowRight')i=(i+1)%4;else if(e.key==='ArrowLeft')i=(i+3)%4;else if(e.key==='Home')i=0;else if(e.key==='End')i=3;else return;e.preventDefault();selectTab(keys[i],true);};
  quick.querySelector('select').onchange=()=>{selected=quick.querySelector('select').value;onControl(selected);placeQuick();refresh();};
- function apply(){const automatic=matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches,next=mode==='mobile'||mode==='auto'&&automatic;if(next===active){onResize();return;}
+ function apply(){const automatic=(matchMedia('(max-width: 900px)').matches||matchMedia('(max-height: 500px) and (pointer: coarse)').matches),next=mode==='mobile'||mode==='auto'&&automatic;if(next===active){onResize();return;}
   restore(quickHome);if(next){active=true;root.dataset.layout='mobile';shell.hidden=false;desktop.hidden=true;
    move(document.querySelector('.viewer-panel'),byId('mobile-preview'));
    move(document.querySelector('.controls'),byId('mobile-panel-controls'));
@@ -48,5 +48,5 @@ export function initMobile({onResize,onControl,onRoomSelect,onSettings}){
  menu.addEventListener('click',e=>{if(e.target.closest('#mobile-navigation button,#mobile-actions button'))menu.close();},true);
  options.addEventListener('click',e=>{if(e.target.closest('#compare'))options.close();},true);
  window.addEventListener('resize',apply);apply();
- return {get active(){return active;},selectObject(id){objectSelect.value=id;},selectControl(key){if(selected===key)return;selected=key;if(active&&tab==='camera'){placeQuick();refresh();}},lessonChanged(lesson){byId('mobile-task-host').hidden=!lesson;lessonFilter.hidden=!lesson;root.dataset.lesson=lesson?.id||'';if(lesson?.id!==lastLesson){lastLesson=lesson?.id||null;root.dataset.mobileAll='false';lessonFilter.querySelector('input').checked=false;if(active&&lesson){configuration.open=lesson.id==='crop';onSettings(lesson.id==='phone'||lesson.id==='color'?'image':'base');selectTab(lesson.id==='perspective'||lesson.id==='focus'?'room':'controls');}}}};
+ return {get active(){return active;},showArea(key){if(active)selectTab(key);},selectObject(id){objectSelect.value=id;},selectControl(key){if(selected===key)return;selected=key;if(active&&tab==='camera'){placeQuick();refresh();}},lessonChanged(lesson){byId('mobile-task-host').hidden=!lesson;lessonFilter.hidden=!lesson;root.dataset.lesson=lesson?.id||'';if(lesson?.id!==lastLesson){lastLesson=lesson?.id||null;root.dataset.mobileAll='false';lessonFilter.querySelector('input').checked=false;if(active&&lesson){configuration.open=lesson.id==='crop';onSettings(lesson.id==='phone'||lesson.id==='color'?'image':'base');selectTab(lesson.id==='perspective'||lesson.id==='focus'?'room':'controls');}}}};
 }

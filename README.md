@@ -1,4 +1,4 @@
-# Kamera verstehen · Optik und Aufnahmetechnik (Desktop und Mobil)
+# Kamera verstehen · Optik und Aufnahmetechnik (Tour, Optik, Desktop und Mobil)
 
 Browserbasiertes Lehrlabor für digitale Fotografie mit deutscher und englischer Oberfläche. Statisches Hosting, keine Analyse-Tracker, keine Kamera- oder Mikrofonberechtigung. QR-Codes entstehen lokal mit qrcode-generator (MIT, Lizenz unter `dist/vendor/`).
 
@@ -39,3 +39,31 @@ Auflösung verändert Pixelabstand und Schärfekriterium, nicht die Pixelzahl de
 `dist/` kann auf einem statischen Hoster veröffentlicht werden. Das portable Quellcodepaket enthält diese Dateien im Wurzelverzeichnis; für GitHub Pages `/(root)` wählen. `.nojekyll` liegt bei. `.openai/hosting.json` gehört zum bestehenden Sites-Projekt und wird nicht in das portable Paket kopiert.
 
 Die Anwendung lädt keine externen Schriften, Fotos oder QR-Dienste nach. Galerieaufnahmen bleiben lokal. Die öffentliche Freigabe der Website veröffentlicht keine lokalen Galerien. Externe Quellenlinks werden erst beim Öffnen besucht.
+
+## Geführter Einstieg und Optiklabor
+
+- **Tour & Demo** in der Hauptnavigation öffnet den Einstieg. Auf Mobilgeräten steht der Einstieg zusätzlich im Reglerbereich und im Menü. Frei erkunden ist jederzeit möglich; es gibt keinen erzwungenen Kursstart.
+- **Geführte Tour**: sieben interaktive Schritte zu Fokus, Blende, Ausschnitt, Bewegung, wenig Licht, Pupillenform und Verschluss. Die Tour prüft die tatsächlichen Zustände. Zurück, Weiter, Überspringen und Beispiel zeigen sind getrennte Aktionen. Bestehende Übungen werden währenddessen ausgesetzt. Beim Beenden wird der vorherige Kamera- und Übungszustand wiederhergestellt; Mit diesem Aufbau weiter übernimmt ausdrücklich das neue Beispiel.
+- **Demo ansehen**: acht deterministische Kapitel, zusammen ungefähr 1 Minute 49 Sekunden. Fokusfahrt, Öffnen der Blende, Zoom, Kamerarückfahrt, Bewegung, Nacht, Masken und Verschluss. Pause/Fortsetzen, Kapitelwechsel und Abbruch bleiben erreichbar. Manuelle Eingaben pausieren die Demo. Bei reduzierter Bewegung werden diskrete Zustände gezeigt und automatische Szenenbewegung unterdrückt. Keine automatische Sprachausgabe und kein Videoexport.
+- **Optik** am Kameraschnitt bzw. **Optiklabor** im mobilen Kamerabereich öffnet die Vertiefung. Blende & Bokeh zeigt Irisfront, vergrößerten geometrischen Lichtfleck, Strahlen und dasselbe Foto. Die Öffnung kann radial gezogen oder mit Pfeiltasten verändert werden. Öffnungsform: runde Referenz, Iris mit 5/6/7/9/11 Lamellen, gerundete Lamellen, Herz- oder Fledermausmaske. A merken und A/B vergleichen verwenden denselben Vergleichsspeicher wie das Hauptlabor.
+- **Verschluss & Zeit** zeigt zwei Vorhänge vor dem Sensor mit Abspielknopf und Phasenschieber. Der beispielhafte Vorhanglauf beträgt 4 ms. Bei kurzer Zeit entsteht ein wandernder Spalt; die gewählte Belichtungsdauer gilt pro Zeile. Das ist ein mechanisches Vergleichsmodell, keine Simulation aller Kameraarten. Smartphones integrieren elektronisch.
+- **Kameraschnitt direkt bedienen**: Objektiv- und Fokusgruppe horizontal ziehen; Blende, Zeit und ISO vertikal. Die Alternative über Regler bleibt vorhanden. Ein Doppelklick öffnet die zugehörige Vertiefung. Die Linsenbewegung ist eine schematische Abstraktion eines Zwei-Gruppen-Modells.
+- **Lichtpunkte im Hintergrund** sind unter Bild & Sensor zuschaltbar. Ihre Tiefe folgt der Hintergrundeinstellung. Die Pupillenform beeinflusst ihre geometrischen Defokusflächen. Die Form kehrt sich im Modell vor/hinter der Fokusebene um.
+
+### Erweiterte Modellannahmen
+
+Für nichtkreisförmige Pupillen ist die Blendenzahl eine Referenz zum umschreibenden Durchmesser. Die offene Fläche wird geometrisch ermittelt und als Transmission gegenüber der Kreisreferenz berücksichtigt. Manuelle Belichtung wird entsprechend dunkler; Automatik kann kompensieren. Der Unschärfedurchmesser und die numerische Schärfentiefe verwenden weiterhin die umschreibende runde Referenz. Der vertikale Strahlenschnitt verwendet die tatsächlich offene axiale Pupillensektion.
+
+Lichtpunkte werden geometrisch abgebildet; ganze Objekte bleiben geglättete 2,5D-Lagen. Keine vollständige PSF-Faltung, Wellenoptik, Objektivfehler, Vignettierung oder gerätespezifische Messkurven. Ein exakt fokussierter Punkt bleibt geometrisch ein Punkt. Sehr kleine Öffnungen unterliegen in der Wirklichkeit der Beugung; eine Lochkamera macht nicht automatisch alles perfekt scharf. Eine Motivmaske ist keine Projektion des Motivs durch eine Jalousie.
+
+### Regressionsprüfung
+
+`node verify.mjs` umfasst nun 61 Prüfungen sowie weiterhin 352.944 manuelle Kombinationen und 1.152 Automatik-/Lichtfälle. Neue Fälle prüfen Pupillenflächen, Maskenverluste, Strahlen, Verschlusszeilen, erreichbare Tourziele, deterministische Demostände, Direktmanipulation, Legacy-Fotos und reduzierte Bewegung.
+
+`npm install` installiert ausschließlich Entwicklungswerkzeuge. `npm run test:ui` führt zehn isolierte DOM-/Komponententests mit Happy DOM und Skia aus. Es gibt keine Abhängigkeiten dieser Werkzeuge im veröffentlichten Browsercode. Der Test bildet ausdrücklich kein CSS-Layout und keinen echten Browser ab. Er prüft gemeinsame Regler, A/B, Tour/Demo, Wiederherstellung, Layout-Reparenting, Sprache, Theme, Zeichnungsereignisse und Galerie. Im lokalen Codex-Workspace sind Testabhängigkeiten außerdem außerhalb des Checkout verfügbar.
+
+Die neue Oberfläche konnte in diesem Durchlauf nicht visuell im Browser abgenommen werden: Windows Computer Use stoppte wegen nicht sicher ermittelbarer Browseradresse. Das ist als offene Prüfung dokumentiert. Separat wurden echte Renderer-Ausgaben mit Skia erzeugt und betrachtet. Diese sind keine Screenshots des Webseitenlayouts.
+
+### Sicherung vor dem Umbau
+
+Version 9 mit Quellcommit `54ce1bf770177c3061c33fdb688775292d7c9c61` ist als Source- und Webseiten-ZIP außerhalb dieses Checkout gesichert. Sie bleibt als gespeicherte Sites-Version erneut veröffentlichbar. Der Ordner `outputs/Backups/2026-10-28-Version-9` enthält Anleitung und SHA-256-Prüfsummen. Galerieaufnahmen bleiben lokal und werden nicht öffentlich eingebettet.

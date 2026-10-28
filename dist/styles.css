@@ -193,3 +193,130 @@ dialog{border:1px solid var(--line);border-radius:11px;background:var(--paper);c
 :root[data-layout=mobile][data-mobile-all=false][data-lesson=color] #mobile-panel-controls #advanced-controls .control:not(:has(#wb)):not(:has(#nd)),
 :root[data-layout=mobile][data-mobile-all=false][data-lesson=phone] #mobile-panel-controls #advanced-controls{display:none!important}
 @media(max-height:500px) and (min-width:600px){:root[data-layout=mobile] #mobile-shell:has(#mobile-task-host:not([hidden])){grid-template-rows:44px minmax(0,110px) minmax(0,1fr)}:root[data-layout=mobile] #mobile-shell:has(#mobile-task-host:not([hidden])) #mobile-preview{grid-row:1/4}:root[data-layout=mobile] #mobile-task-host:not([hidden]){grid-column:2;grid-row:2;align-self:stretch;max-height:none;box-shadow:none}:root[data-layout=mobile] #mobile-shell:has(#mobile-task-host:not([hidden])) #mobile-workarea{grid-row:3}}
+/* Optics learning: scoped additions retain the existing laboratory and mobile layouts. */
+.learning-entry{color:var(--green);border:1px solid var(--line);font-weight:700}
+:root[data-theme=dark] .learning-entry{color:var(--teal)}
+:root:not([data-layout=mobile]) .lab-layout{grid-template-columns:clamp(195px,15vw,270px) minmax(0,1.35fr) minmax(0,1fr)}
+#camera-canvas{touch-action:none}
+.camera-panel .panel-title #optics-open{margin-left:auto;white-space:nowrap;font-size:.72rem;padding:4px 6px}
+.camera-panel .panel-title .panel-hint{display:none}
+.optics-mobile-entry{display:none}
+.guide-highlight{outline:3px solid var(--amber)!important;outline-offset:-3px;box-shadow:0 0 0 3px #bf872f33;position:relative;z-index:1}
+#learning-launch-dialog{width:min(820px,95vw)}
+.learning-paths{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.learning-paths button{display:flex;flex-direction:column;text-align:left;gap:10px;padding:18px;min-height:120px;white-space:normal}
+.learning-paths button:last-child{grid-column:1/-1;min-height:80px}
+.learning-paths b{font-size:1.2rem;color:var(--teal)}
+.learning-paths span{font-size:.9rem;font-weight:400;line-height:1.6;color:var(--muted)}
+.learning-welcome{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px;border:1px solid var(--line);background:var(--paper);border-radius:8px;margin-bottom:6px;font-size:.85rem}
+.learning-welcome span{width:100%;color:var(--muted)}
+.learning-welcome button{min-height:40px}
+#mobile-guide-host{display:none}
+.guide-bar{position:fixed;right:14px;bottom:12px;width:min(480px,43vw);max-height:290px;overflow:auto;overscroll-behavior:contain;padding:12px 14px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:9px;box-shadow:0 8px 40px #10282040;z-index:50;font-size:.85rem;line-height:1.4}
+.guide-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.7rem;font-weight:700;letter-spacing:.5px;color:var(--teal)}
+.guide-heading>button{border:0;border-radius:50%;height:28px;width:28px;font-size:1.2rem;padding:0;flex-shrink:0}
+.guide-bar progress{appearance:none;width:100%;height:3px;border:0;background:var(--line);margin:4px 0;accent-color:var(--teal)}
+.guide-bar progress::-webkit-progress-bar{background:var(--line)}.guide-bar progress::-webkit-progress-value{background:var(--teal)}
+.guide-bar h3{font-size:1.08rem;line-height:1.25;margin:5px 0;letter-spacing:-.3px}
+.guide-bar p{font-size:.82rem;line-height:1.4;margin:6px 0;color:var(--muted)}
+.guide-bar .guide-result{color:var(--teal);font-weight:600;font-size:.73rem}
+.guide-bar details{font-size:.8rem;margin:5px 0}
+.guide-bar summary{font-size:.75rem;font-weight:600;padding:3px 0}
+.guide-bar details p{font-size:.76rem}
+.guide-actions{display:flex;gap:5px;align-items:center;position:sticky;bottom:-1px;background:var(--paper);padding:6px 0 1px;z-index:2;flex-wrap:wrap}
+.guide-actions button{min-height:34px;font-size:.76rem;padding:5px 8px;flex:1}
+.guide-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.guide-links button{background:transparent;border:0;padding:2px;font-size:.65rem;color:var(--muted);text-decoration:underline}
+.guide-pointer{position:fixed;width:28px;height:28px;margin:0 0 0 -4px;border-radius:50%;background:#fff4c1;color:#1a352c;border:2px solid #bf872f;box-shadow:0 2px 10px #0005;z-index:80;pointer-events:none;font-size:23px;text-align:center;line-height:25px;transition:left .09s linear,top .09s linear}
+#optics-dialog{width:min(1550px,97vw);max-height:95dvh;padding:16px;overflow:auto}
+#optics-dialog .optic-header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:8px}
+#optics-dialog .optic-header h2{font-size:1.35rem;margin:0;letter-spacing:-.4px}
+#optics-dialog .optic-header .eyebrow{display:block;font-size:.65rem;margin-bottom:4px}
+#optics-dialog .optic-header form{display:block}
+#optics-dialog .optic-header .close{position:static;float:none;width:36px;height:36px;min-width:36px}
+.optic-mode{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.optic-mode button{font-size:.8rem;min-height:34px}
+.optic-mode button[aria-pressed=true]{background:var(--green);color:white;border-color:var(--green)}
+#opt-example{margin-left:auto}
+.optic-workspace{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:minmax(320px,1fr) auto;gap:12px;height:calc(90dvh - 105px)}
+.optic-workspace figure{margin:0;min-width:0;min-height:0;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--bg)}
+.optic-workspace figcaption{font-size:.72rem;color:var(--muted);padding:5px 8px;min-height:26px;background:var(--paper)}
+.optic-theory{display:flex;flex-direction:column;gap:9px;min-height:0}
+.optic-pupil-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;height:44%;min-height:160px}
+.optic-pupil-row canvas{display:block;width:100%;height:calc(100% - 26px)}
+#opt-iris{cursor:grab;touch-action:none}
+#opt-iris:active{cursor:grabbing}
+.optic-rays{flex:1;min-height:135px!important}
+.optic-rays canvas{display:block;width:100%;height:calc(100% - 26px)}
+.optic-photo-aside{display:flex;flex-direction:column;gap:7px;min-height:0}
+.optic-photo-frame{flex:1;min-height:170px!important}
+#opt-photo{display:block;width:100%;height:calc(100% - 26px);cursor:crosshair}
+.optic-readout{display:flex;flex-wrap:wrap;gap:4px 13px;padding:5px 0;font:.76rem ui-monospace,monospace;color:var(--teal)}
+#optics-dialog .optic-explanation{font-size:.82rem;line-height:1.5;margin:0;color:var(--ink)}
+.optic-more{font-size:.8rem}
+.optic-more summary{font-size:.75rem;padding:2px 0}
+#optics-dialog .optic-more p{font-size:.82rem;line-height:1.6}
+.optic-more[open]{max-height:230px;overflow:auto;flex-shrink:0;padding:8px;border:1px solid var(--line);border-radius:5px}
+.optic-more a{color:var(--teal)}
+.optic-controls{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper)}
+.optic-field{font-size:.75rem;color:var(--muted);display:block;min-width:0}
+.optic-field output{display:block;font:.85rem ui-monospace,monospace;color:var(--teal);margin:4px 0}
+.optic-field input[type=range]{height:28px;margin:0}
+.optic-field select{display:block;width:100%;margin-top:5px;min-height:36px}
+.optic-checks{grid-column:1/-1;display:flex;gap:8px 20px;align-items:center;flex-wrap:wrap;font-size:.75rem}
+.optic-checks label{display:flex;align-items:center;gap:5px;min-height:24px}
+#opt-shutter-figure{flex:1;min-height:180px}
+#opt-shutter{display:block;width:100%;height:calc(100% - 64px);min-height:135px}
+.shutter-phase{display:flex;align-items:center;gap:12px;padding:4px 8px;background:var(--paper);font-size:.75rem}
+.shutter-phase>label{display:flex;gap:8px;align-items:center;flex:1}
+.shutter-phase input{flex:1;width:100%;min-width:40px}
+.shutter-phase button{font-size:.72rem;white-space:nowrap}
+#opt-guide-host:empty{display:none}
+#optics-dialog .guide-bar{position:relative;right:auto;bottom:auto;width:100%;max-height:125px;box-shadow:none;margin-bottom:8px;padding:8px 11px}
+#optics-dialog .guide-bar h3{font-size:1rem}
+#optics-dialog .guide-bar .guide-task{margin:3px 0}
+#optics-dialog .guide-bar .guide-result{font-size:.7rem}
+#optics-dialog:has(#guide-bar:not([hidden])) .optic-workspace{height:calc(90dvh - 250px);grid-template-rows:minmax(240px,1fr) auto}
+#optics-dialog:has(#guide-bar:not([hidden])) .optic-pupil-row{min-height:125px}
+#optics-dialog:has(#guide-bar:not([hidden])) .optic-rays{min-height:105px!important}
+#optics-dialog:has(#guide-bar:not([hidden])) .optic-photo-frame{min-height:130px!important}
+:root[data-layout=mobile] .learning-entry{min-height:44px}
+:root[data-layout=mobile] #mobile-guide-host:not([hidden]){display:block;flex-shrink:0;max-height:205px;overflow:auto}
+:root[data-layout=mobile] .guide-bar{position:static;width:100%;max-height:none;box-shadow:none;padding:8px 10px}
+:root[data-layout=mobile] .guide-bar .guide-heading{font-size:.72rem}
+:root[data-layout=mobile] .guide-bar .guide-actions button{min-height:36px}
+:root[data-layout=mobile] .guide-bar .guide-task{font-size:.85rem}
+:root[data-layout=mobile] .guide-bar .guide-links button{min-height:26px;font-size:.72rem}
+:root[data-layout=mobile] .optics-mobile-entry{display:block;min-height:44px;font-size:.95rem;width:100%;margin-top:8px}
+:root[data-layout=mobile] #optics-dialog{padding:9px;max-height:calc(100dvh - 8px)}
+:root[data-layout=mobile] #optics-dialog .optic-header{align-items:flex-start;gap:8px}
+:root[data-layout=mobile] #optics-dialog .optic-header h2{font-size:1.1rem}
+:root[data-layout=mobile] .optic-mode button{min-height:40px;font-size:.8rem;flex:1}
+:root[data-layout=mobile] #opt-example{margin-left:0}
+:root[data-layout=mobile] .optic-workspace{display:flex;flex-direction:column;height:auto!important;gap:8px}
+:root[data-layout=mobile] .optic-theory,:root[data-layout=mobile] .optic-photo-aside{display:contents}
+:root[data-layout=mobile] .optic-photo-frame{order:0;flex:none;height:clamp(170px,27dvh,290px);min-height:0!important;position:sticky;top:0;z-index:3}
+:root[data-layout=mobile] .optic-pupil-row{order:1;flex:none;height:190px;min-height:0}
+:root[data-layout=mobile] .optic-controls{order:2;grid-template-columns:1fr 1fr;flex:none;padding:9px;gap:9px}
+:root[data-layout=mobile] .optic-field{font-size:.85rem}
+:root[data-layout=mobile] .optic-field input[type=range]{height:36px}
+:root[data-layout=mobile] .optic-field select{font-size:.9rem;min-height:40px}
+:root[data-layout=mobile] .optic-checks{font-size:.85rem;gap:5px}
+:root[data-layout=mobile] .optic-checks label{min-height:36px;width:100%}
+:root[data-layout=mobile] .optic-rays{order:3;flex:none;height:245px;min-height:0!important}
+:root[data-layout=mobile] .optic-readout{order:4;font-size:.8rem}
+:root[data-layout=mobile] #opt-explanation{order:5;font-size:.9rem}
+:root[data-layout=mobile] .optic-more{order:6}
+:root[data-layout=mobile] #opt-shutter-figure{order:1;flex:none;height:290px}
+:root[data-layout=mobile] #opt-guide-host .guide-bar{max-height:200px}
+:root[data-layout=mobile] .learning-paths{grid-template-columns:1fr}
+:root[data-layout=mobile] .learning-paths button{min-height:100px}
+:root[data-layout=mobile] .learning-paths button:last-child{grid-column:auto}
+@media(max-height:650px){:root[data-layout=mobile] #mobile-guide-host:not([hidden]){max-height:155px}}
+@media(max-height:500px) and (min-width:600px){:root[data-layout=mobile] #mobile-shell:has(#mobile-guide-host:not([hidden])){grid-template-rows:44px 110px minmax(0,1fr)}:root[data-layout=mobile] #mobile-shell:has(#mobile-guide-host:not([hidden])) #mobile-preview{grid-row:1/4}:root[data-layout=mobile] #mobile-guide-host:not([hidden]){grid-column:2;grid-row:2;max-height:110px}:root[data-layout=mobile] #mobile-shell:has(#mobile-guide-host:not([hidden])) #mobile-workarea{grid-column:2;grid-row:3}}
+@media(prefers-reduced-motion:reduce){.guide-pointer{display:none;transition:none}.guide-highlight{scroll-behavior:auto}}
+.optic-comparison{display:flex;gap:6px;flex-shrink:0}.optic-comparison button{min-height:32px;font-size:.75rem}
+#optics-dialog:has(#guide-bar:not([hidden])) .optic-explanation{display:none}
+:root[data-layout=mobile] .optic-comparison{order:4}:root[data-layout=mobile] .optic-comparison button{min-height:40px;font-size:.85rem;flex:1}
+.optic-field select:disabled,.optic-checks input:disabled{opacity:.45}
+.optic-readout .optic-limit{color:var(--coral);font-weight:700}

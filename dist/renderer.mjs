@@ -1,3 +1,4 @@
+import {pupilPath} from './pupil.mjs';
 import {metrics,clamp,distanceText,sensors,crop,incidentMultiplier,windowEmissionMultiplier,projectPoint} from './physics.mjs';
 import {tr} from './i18n.mjs';
 const C={ink:'#24483f',muted:'#798b7c',grid:'#dde5d6',teal:'#278b7b',amber:'#c38c39',coral:'#c56b53'};
@@ -23,6 +24,7 @@ export function sceneObjects(s,t=0){
  const bounce=s.ballSpeed?Math.abs(Math.sin(t*s.ballSpeed*.65))*1.15:0,ballV=s.ballSpeed*.65*1.15*Math.cos(t*s.ballSpeed*.65)*Math.sign(Math.sin(t*s.ballSpeed*.65)||1);
  return [
  {id:'wall',type:'wall',x:0,z:s.background,height:3.8},
+ ...(s.bokehLights?[{id:'points',type:'points',x:0,z:s.background,height:3.6}]:[]),
  {id:'tree-left',type:'tree',x:-3.2,z:s.background-.5,height:3.5},
  {id:'tree-right',type:'tree',x:3.7,z:s.background-1,height:4},
  {id:'bench',type:'bench',x:-1.7,z:s.background-2,height:.8},
@@ -41,7 +43,7 @@ export function drawPhoto(canvas,state,t=0,opts={}){
  ctx.clearRect(0,0,W,H);ctx.fillStyle='#e7ebdf';ctx.fillRect(0,0,W,H);
  const ratio=sensor.w/sensor.h;let w=W,h=W/ratio;if(h>H){h=H;w=H*ratio;}const x0=(W-w)/2,y0=(H-h)/2;
  // Work at a bounded raster size; blur and noise remain interactive on laptops.
- const rw=Math.round(Math.min(w,s.motion?760:1100)),rh=Math.round(rw/ratio),scale=rw/w;
+ const rw=Math.round(Math.min(w,s.motion||opts.fast?760:1100)),rh=Math.round(rw/ratio),scale=rw/w;
  const [cv,c]=buffer('photo',rw,rh),[layer,l]=buffer('layer',rw,rh),[illum,ic]=buffer('illumination',rw,rh);ic.fillStyle='#000';ic.fillRect(0,0,rw,rh);
  const k=rw*s.focal/sensor.w,cy=rh*.49;
  const project=(x,y,z)=>projectPoint(s,x,y,z,rw,rh);
@@ -60,8 +62,12 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   l.clearRect(0,0,rw,rh);l.filter='none';l.globalAlpha=1;
   const [px,py,q]=project(obj.x,obj.y||0,obj.z),size=obj.height*q;
   if(obj.z+s.cameraBack<=.15)continue;
-  if(px+size<0||px-size>rw||py-size>rh||py<0)continue;
+  if(obj.type!=='points'&&(px+size<0||px-size>rw||py-size>rh||py<0))continue;
   l.save();l.translate(px,py);l.scale(q,q);
+  if(obj.type==='points'){
+   const radius=Math.max(.012,m.blurAt(obj.z+s.cameraBack)/sensor.w*rw/2/q),area=Math.max(.00045,radius*radius),alpha=Math.min(1,.018/area);
+   for(let i=0;i<13;i++){const xx=(i-6)*.62,yy=-1.6-(i%3)*.43;l.save();l.translate(xx,yy);const sign=obj.z+s.cameraBack>s.focus?-1:1;l.scale(sign,sign);pupilPath(l,0,0,radius,s);l.fillStyle=['#ffe8a8','#ffb76b','#b8e6ee'][i%3];l.globalAlpha=alpha;l.fill();l.restore();}l.globalAlpha=1;
+  }
   if(obj.type==='wall'){
    l.fillStyle=night?'#788276':'#c8c9b3';l.fillRect(-15,-3.8,30,3.8);
    l.fillStyle=night?'#565f52':'#d9d5bd';l.fillRect(-15,-3.84,30,.14);l.fillRect(-15,-.16,30,.16);
@@ -130,8 +136,8 @@ export function drawPhoto(canvas,state,t=0,opts={}){
    circle(l,0,-.18,.18,'#bfa258');l.save();l.beginPath();l.arc(0,-.18,.18,0,7);l.clip();line(l,-.19,-.13,.19,-.13,'#efe0ad',.035);line(l,-.08,-.38,.06,.04,'#847644',.02);l.restore();
   }
   l.restore();
-  if(pickContext){const[hit,hc]=buffer('pick-object',rw,rh);hc.drawImage(layer,0,0);hc.globalCompositeOperation='source-in';hc.fillStyle=`rgb(${(pickPalette[(pickCodes[obj.id]||0)-1]||[0,0,0]).join(',')})`;hc.fillRect(0,0,rw,rh);hc.globalCompositeOperation='source-over';pickContext.drawImage(hit,0,0);}
-  let blur=m.blurAt(obj.z+s.cameraBack)/sensor.w*rw/2;
+  if(pickContext&&obj.type!=='points'){const[hit,hc]=buffer('pick-object',rw,rh);hc.drawImage(layer,0,0);hc.globalCompositeOperation='source-in';hc.fillStyle=`rgb(${(pickPalette[(pickCodes[obj.id]||0)-1]||[0,0,0]).join(',')})`;hc.fillRect(0,0,rw,rh);hc.globalCompositeOperation='source-over';pickContext.drawImage(hit,0,0);}
+  let blur=obj.type==='points'?0:m.blurAt(obj.z+s.cameraBack)/sensor.w*rw/2;
   // Diffraction is displayed as a gentle whole-image softness, not an Airy PSF convolution.
   const diffraction=m.airy/sensor.w*rw*.2;
   blur=Math.sqrt(blur*blur+diffraction*diffraction);
@@ -143,15 +149,15 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   if(copies===1)c.drawImage(layer,0,0);
   else {const[mv,mc]=buffer('movement',rw,rh);mc.globalCompositeOperation='lighter';mc.globalAlpha=1/copies;for(let n=0;n<copies;n++){const shift=(n/(copies-1)-.5)*Math.min(smear,rw);mc.drawImage(layer,shift,(n/(copies-1)-.5)*verticalSmear);}c.drawImage(mv,0,0);}
   c.restore();
-  if(s.lampOn||s.windowsOn){const[mask,mc]=buffer('light-mask',rw,rh);mc.drawImage(layer,0,0);mc.globalCompositeOperation='source-in';const factor=incidentMultiplier(s,obj.x,obj.z,obj.height*.5),encoded=Math.round(clamp(Math.log2(factor)/16,0,1)*255);mc.fillStyle=`rgb(${encoded},0,0)`;mc.fillRect(0,0,rw,rh);mc.globalCompositeOperation='source-over';
+  if(s.lampOn||s.windowsOn||s.bokehLights){const[mask,mc]=buffer('light-mask',rw,rh);mc.drawImage(layer,0,0);mc.globalCompositeOperation='source-in';const factor=obj.type==='points'?1+2**(10-s.ev):incidentMultiplier(s,obj.x,obj.z,obj.height*.5),encoded=Math.round(clamp(Math.log2(factor)/16,0,1)*255);mc.fillStyle=`rgb(${encoded},0,0)`;mc.fillRect(0,0,rw,rh);mc.globalCompositeOperation='source-over';
   if(obj.type==='wall'&&s.windowsOn){mc.save();mc.translate(px,py);mc.scale(q,q);const e=Math.round(clamp(Math.log2(windowEmissionMultiplier(s))/16,0,1)*255);mc.fillStyle=`rgb(${e},0,0)`;for(let xx=-13;xx<=13;xx+=1.6)mc.fillRect(xx,-3.2,1.05,1.9);mc.restore();}
   if(obj.type==='lamp'){mc.save();mc.translate(px,py);mc.scale(q,q);mc.fillStyle=`rgb(${Math.round(clamp((s.lampEV+1-s.ev)/16,0,1)*255)},0,0)`;if(s.lampType==='spot')mc.fillRect(-.13,-2.82,.35,.2);else mc.fillRect(.3,-2.83,.35,.12);mc.restore();}
   ic.save();ic.filter=`blur(${clamp(blur,0,36)}px)`;ic.drawImage(mask,0,0);ic.restore();}
-  if(obj.type!=='wall'&&obj.type!=='lamp'){const bw=(obj.width||obj.height*.6)*q;boxes.push({id:obj.id,x:x0+(px-bw/2)/scale,y:y0+(py-(obj.id==='bird'||obj.id==='wings'?.4*q:size))/scale,w:bw/scale,h:(obj.id==='bird'||obj.id==='wings'?.65*q:size)/scale,z:obj.z+s.cameraBack,sharp:m.blurAt(obj.z+s.cameraBack)<=m.coc});}
+  if(obj.type!=='wall'&&obj.type!=='lamp'&&obj.type!=='points'){const bw=(obj.width||obj.height*.6)*q;boxes.push({id:obj.id,x:x0+(px-bw/2)/scale,y:y0+(py-(obj.id==='bird'||obj.id==='wings'?.4*q:size))/scale,w:bw/scale,h:(obj.id==='bird'||obj.id==='wings'?.65*q:size)/scale,z:obj.z+s.cameraBack,sharp:m.blurAt(obj.z+s.cameraBack)<=m.coc});}
  }
  if(!s.tripod){const smear=s.time*s.focal*m.crop*(s.stabilization?.15:1)*2; if(smear>1){const[sh,sc]=buffer('shake',rw,rh);sc.drawImage(cv,0,0);c.globalAlpha=.35;c.drawImage(sh,Math.min(18,smear),Math.min(9,smear*.3));c.globalAlpha=1;}}
  // Fixed sRGB display model with physically directed exposure and photon-noise proxy.
- const lighting=s.lampOn||s.windowsOn?ic.getImageData(0,0,rw,rh).data:null;if(grainCache.length!==rw*rh)grainCache=Float32Array.from({length:rw*rh},(_,i)=>grainSample(i));
+ const lighting=s.lampOn||s.windowsOn||s.bokehLights?ic.getImageData(0,0,rw,rh).data:null;if(grainCache.length!==rw*rh)grainCache=Float32Array.from({length:rw*rh},(_,i)=>grainSample(i));
  const data=c.getImageData(0,0,rw,rh),a=data.data,gain=2**clamp(m.offset,-12,10),balance=Math.log(s.wb/s.temperature);
  const gains=[Math.exp(balance*.65),1,Math.exp(-balance*.65)];
  for(let i=0;i<a.length;i+=4){

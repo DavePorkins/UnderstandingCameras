@@ -400,5 +400,20 @@ export const translations={
  "Regler im Kameraschnitt": "Control in camera cutaway",
  "Objekt im Raum": "Scene object",
  "Alle Regler zeigen": "Show all controls",
- "Kamera und Motive ziehen. Motiv antippen, dann oben im Raum auf Fokussieren tippen.": "Drag the camera and objects. Tap an object, then tap Focus at the top of the scene."
+ "Kamera und Motive ziehen. Motiv antippen, dann oben im Raum auf Fokussieren tippen.": "Drag the camera and objects. Tap an object, then tap Focus at the top of the scene.",
+ "Pupillenform": "Pupil shape",
+ "Rund": "Round",
+ "Iris": "Iris",
+ "Herzmaske": "Heart mask",
+ "Fledermausmaske": "Bat mask",
+ "Lamellen": "Blades",
+ "Gerundete Lamellen": "Rounded blades",
+ "Lichtpunkte": "Light sources",
+ "◎ Optik": "◎ Optics",
+ "◎ Optiklabor": "◎ Optics lab",
+ "Blende, Lichtpunkte und Verschluss vertiefen": "Explore aperture, light highlights and shutter",
+ "Sony · Verschlussvorhänge": "Sony · Shutter curtains",
+ "Pupillenformen werden für kleine, achsnahe Lichtpunkte geometrisch abgebildet. Iris und Motivmasken verändern Form und offene Fläche. Maskenverluste beeinflussen die Belichtung; die Zeitautomatik kann sie ausgleichen. Ganze Objektlagen bleiben vereinfacht weichgezeichnet. Wellenoptik, Abbildungsfehler und Randvignettierung sind keine vollständige Simulation.": "Pupil shapes are imaged geometrically for small, near-axis light sources. Iris and shaped masks change contour and open area. Mask losses affect exposure; auto shutter can compensate. Whole object layers retain simplified softening. Wave optics, aberrations and vignetting are not fully simulated.",
+ "Das Verschlusslabor zeigt zwei Vorhänge mit einer beispielhaften Laufzeit von 4 ms. Die eingestellte Belichtungszeit gilt pro Sensorzeile, nicht für den gesamten Vorhangdurchlauf. Dies ist kein Messmodell einer bestimmten Kamera.": "The shutter lab shows two curtains with an illustrative 4 ms transit. The selected exposure duration applies to each sensor row, not the entire curtain sweep. This is not a measured model of a specific camera.",
+ "Lichtpunkte im Hintergrund": "Background light sources"
 };
