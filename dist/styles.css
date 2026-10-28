@@ -59,3 +59,136 @@ dialog{border:1px solid var(--line);border-radius:11px;background:var(--paper);c
 :root[data-theme=dark] #toast{background:#dce9e0;color:#14251b}
 :root[data-theme=dark] dialog::backdrop{background:#050c09bf}
 :root[data-theme=dark] #share-qr{color-scheme:light;background:#fff}
+/* Mobile is an independent layout scope; the desktop grid keeps its original rules. */
+.mobile-only,#mobile-shell{display:none}
+#layout-menu{min-width:28px}
+#mobile-menu{width:min(470px,94vw)}#mobile-navigation nav,#mobile-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}#mobile-menu .field{margin-top:16px}#mobile-menu select{width:100%}#mobile-menu .mobile-only{display:block}#mobile-menu button:not(.close),#mobile-menu select{min-height:44px;font-size:1rem}#mobile-menu .nav{border:1px solid var(--line);color:var(--ink)}
+#mobile-photo-options{width:min(600px,96vw)}#mobile-photo-options .viewer-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 0}#mobile-photo-options .viewer-toolbar label{min-height:44px;font-size:.9rem}#mobile-photo-options .metrics{margin:10px 0}#mobile-photo-options .photo-help{background:transparent;font-size:.85rem;padding:12px 0}#mobile-photo-options button:not(.close){min-height:44px;margin:5px 8px 0 0}#mobile-photo-options .metric .label{white-space:normal}
+:root[data-layout=mobile]{font-size:15px}
+:root[data-layout=mobile] body{overflow:hidden;overscroll-behavior:none}
+:root[data-layout=mobile] #workspace{width:100%;height:100dvh;transform:none}
+:root[data-layout=mobile] .topbar{height:54px;padding:4px max(10px,env(safe-area-inset-right)) 4px max(10px,env(safe-area-inset-left));gap:7px}
+:root[data-layout=mobile] .brand{font-size:1rem;gap:5px;letter-spacing:-.4px;min-width:0}
+:root[data-layout=mobile] .brand span{display:inline!important}
+:root[data-layout=mobile] .brand svg{width:23px;flex-shrink:0}
+:root[data-layout=mobile] .tools{gap:2px;align-items:center}
+:root[data-layout=mobile] .tools button{min-width:40px;height:44px;padding:4px;font-size:1rem}
+:root[data-layout=mobile] #theme-toggle>span:last-child{display:none}
+:root[data-layout=mobile] .tools #language{height:40px;font-size:.8rem;max-width:76px;padding:4px}
+:root[data-layout=mobile] main{height:calc(100dvh - 54px);padding:0}
+:root[data-layout=mobile] #page-lab{height:100%}
+:root[data-layout=mobile] #mobile-shell:not([hidden]){display:flex;flex-direction:column;height:100%;min-height:0;padding:0 max(6px,env(safe-area-inset-right)) max(0px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));gap:5px}
+:root[data-layout=mobile] #mobile-preview{flex:0 0 auto;height:clamp(185px,34dvh,330px);min-height:0}
+:root[data-layout=mobile][data-mobile-image=compact] #mobile-preview{height:clamp(145px,24dvh,240px)}
+:root[data-layout=mobile][data-mobile-image=large] #mobile-preview{height:clamp(220px,43dvh,420px)}
+:root[data-layout=mobile] #mobile-preview .viewer-panel{height:100%;border-radius:8px}
+:root[data-layout=mobile] .mobile-only{display:block}
+:root[data-layout=mobile] .section-number,:root[data-layout=mobile] .panel-hint,:root[data-layout=mobile] .live{display:none}
+:root[data-layout=mobile] .panel-title{min-height:39px;padding:3px 9px;gap:6px}
+:root[data-layout=mobile] .panel-title h2{font-size:.95rem}
+:root[data-layout=mobile] .viewer-panel .panel-title #take-photo{margin-left:auto;min-height:32px;font-size:.8rem;padding:4px 10px}
+:root[data-layout=mobile] .viewer-panel .panel-title #mobile-photo-settings{min-width:40px;min-height:32px;font-size:1.2rem;padding:0 8px}
+:root[data-layout=mobile] .photo-settings{font-size:.68rem;gap:9px;left:6px;bottom:6px;padding:4px 6px}
+:root[data-layout=mobile] #mobile-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex-shrink:0}
+:root[data-layout=mobile] #mobile-tabs button{min-height:44px;font-size:.9rem;background:var(--paper);padding:5px}
+:root[data-layout=mobile] #mobile-tabs button[aria-selected=true]{background:var(--green);color:white;border-color:var(--green)}
+:root[data-layout=mobile] #mobile-workarea{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch;padding-bottom:15px}
+:root[data-layout=mobile] #mobile-workarea>section{min-height:100%;outline:none}
+:root[data-layout=mobile] .panel{border-radius:8px}
+:root[data-layout=mobile] .controls{display:block;overflow:visible}
+:root[data-layout=mobile] .controls>.panel-title{display:none}
+:root[data-layout=mobile] #mobile-configuration{border:1px solid var(--line);border-radius:8px;background:var(--paper);margin-bottom:6px}
+:root[data-layout=mobile] #mobile-configuration summary{min-height:44px;display:list-item;list-style-position:inside;padding:12px;font-size:.9rem;font-weight:600;cursor:pointer}
+:root[data-layout=mobile] .camera-configuration{padding:5px 12px 10px}
+:root[data-layout=mobile] .field{font-size:.85rem}
+:root[data-layout=mobile] select{font-size:1rem;padding:8px;min-height:42px}
+:root[data-layout=mobile] .settings-tabs{padding:4px 8px}
+:root[data-layout=mobile] .settings-tabs button{min-height:42px;font-size:.9rem}
+:root[data-layout=mobile] #main-controls,:root[data-layout=mobile] #advanced-controls{display:block}
+:root[data-layout=mobile] .controls #main-controls .control,:root[data-layout=mobile] .controls #main-controls .control:first-child,:root[data-layout=mobile] .control,:root[data-layout=mobile] .controls #advanced-controls .control{min-height:88px;max-height:none;padding:10px 13px;display:block}
+:root[data-layout=mobile] .control-head{min-height:30px;margin-bottom:2px}
+:root[data-layout=mobile] .control-head label{font-size:.95rem;white-space:normal}
+:root[data-layout=mobile] .control-head output{font-size:1rem}
+:root[data-layout=mobile] .auto-pill{min-width:44px;min-height:32px;font-size:.75rem;padding:4px}
+:root[data-layout=mobile] input[type=range]{height:32px;touch-action:pan-y}
+:root[data-layout=mobile] input[type=checkbox],:root[data-layout=mobile] input[type=radio]{width:18px;height:18px}
+:root[data-layout=mobile] .check{min-height:36px;font-size:.85rem;gap:8px}
+:root[data-layout=mobile] .focal-marks{height:38px;margin:0 18px}
+:root[data-layout=mobile] .focal-marks button{min-height:36px;min-width:36px;font-size:.75rem;padding:5px 0}
+:root[data-layout=mobile] .control-explainer{min-height:0;margin:10px}
+:root[data-layout=mobile] .control-explainer p{font-size:.85rem}
+:root[data-layout=mobile] .control-bottom{padding:8px 12px 12px}
+:root[data-layout=mobile] .control-bottom #auto-setup{min-height:44px;font-size:.9rem}
+:root[data-layout=mobile] #image-settings{display:block}
+:root[data-layout=mobile] .image-options{padding:8px 13px}
+:root[data-layout=mobile] .image-options .check{font-size:.9rem;margin:7px 0}
+:root[data-layout=mobile] .image-options button{font-size:.85rem;min-height:44px}
+:root[data-layout=mobile] .camera-panel{height:auto;overflow:visible}
+:root[data-layout=mobile] .camera-canvas-wrap{height:clamp(170px,25dvh,240px);flex:none}
+:root[data-layout=mobile] .ray-controls{flex-wrap:wrap;gap:5px 12px;padding:5px 10px;font-size:.8rem}
+:root[data-layout=mobile] .ray-controls label{min-height:32px;gap:5px}
+:root[data-layout=mobile] .ray-controls>span{display:none}
+:root[data-layout=mobile] .component-links{padding:3px;gap:2px}
+:root[data-layout=mobile] .component-links button{display:block!important;min-height:40px;font-size:.62rem;white-space:normal;padding:3px 1px}
+:root[data-layout=mobile] .camera-caption{display:none}
+:root[data-layout=mobile] #mobile-quick,:root[data-layout=mobile] #mobile-room-quick{border:1px solid var(--line);border-radius:8px;background:var(--paper);margin-top:6px}
+:root[data-layout=mobile] #mobile-quick>.field{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:0}
+:root[data-layout=mobile] #mobile-quick-select{flex:1;min-width:100px;width:50%;margin:0;font-size:.9rem}
+:root[data-layout=mobile] #mobile-room-quick>p{padding:0 12px}
+:root[data-layout=mobile] .room-panel{height:clamp(255px,39dvh,380px)}
+:root[data-layout=mobile] .room-canvas-wrap{min-height:170px}
+:root[data-layout=mobile] .room-summary{font-size:.75rem;min-height:36px;padding:6px}
+:root[data-layout=mobile] .room-panel .panel-title #room-focus{min-height:36px;font-size:.8rem;white-space:normal}
+:root[data-layout=mobile] .scene-panel{min-height:400px}
+:root[data-layout=mobile] .scene-panel .panel-title select{font-size:.85rem;min-height:38px}
+:root[data-layout=mobile] .scene-controls{display:block}
+:root[data-layout=mobile] .scene-controls .control{border-right:0;padding:12px;min-height:90px}
+:root[data-layout=mobile] .scene-controls .control-head label{font-size:.95rem}
+:root[data-layout=mobile] .scene-controls .control-head output{font-size:.9rem}
+:root[data-layout=mobile] .motion-control{padding:10px}
+:root[data-layout=mobile] .motion-targets button{min-height:44px;font-size:.8rem}
+:root[data-layout=mobile] .light-controls{gap:8px;padding:10px;font-size:.9rem}
+:root[data-layout=mobile] .light-controls>label{min-height:38px}
+:root[data-layout=mobile] .light-controls select{font-size:.85rem;max-width:140px}
+:root[data-layout=mobile] .lamp-strength{min-width:100%}
+:root[data-layout=mobile] .lamp-strength input{width:auto}
+:root[data-layout=mobile] .insight{font-size:.82rem;padding:10px}
+:root[data-layout=mobile] #mobile-task-host{flex-shrink:0;max-height:170px;overflow:auto;border-radius:8px;border:1px solid var(--line)}
+:root[data-layout=mobile] #active-experiment{margin:0;max-height:none;padding:8px 10px;border:0;background:#eaf0f7;color:#203e38}
+:root[data-layout=mobile] #active-experiment .learning-heading{font-size:.8rem;margin-bottom:3px}
+:root[data-layout=mobile] #active-experiment p{font-size:.8rem;line-height:1.35;margin:4px 0}
+:root[data-layout=mobile] #active-experiment .task-buttons button{min-height:36px;font-size:.8rem;padding:5px 8px}
+:root[data-layout=mobile][data-theme=dark] #active-experiment{background:#213a48;color:var(--ink)}
+:root[data-layout=mobile][data-theme=dark] #active-experiment.completed{background:#284630}
+:root[data-layout=mobile] dialog{font-size:1rem;width:calc(100vw - 14px)!important;max-width:700px;padding:16px;max-height:calc(100dvh - 16px);border-radius:10px;overscroll-behavior:contain}
+:root[data-layout=mobile] #library-dialog{height:calc(100dvh - 16px)}
+:root[data-layout=mobile] dialog .close{width:40px;height:40px;min-width:40px;min-height:40px;top:0}
+:root[data-layout=mobile] dialog h2{font-size:1.3rem}
+:root[data-layout=mobile] dialog h1{font-size:1.5rem}
+:root[data-layout=mobile] .lesson-grid,:root[data-layout=mobile] .atlas-grid,:root[data-layout=mobile] .article-layout,:root[data-layout=mobile] .comparison,:root[data-layout=mobile] #gallery-grid{grid-template-columns:1fr;gap:12px}
+:root[data-layout=mobile] .lesson-card>button,:root[data-layout=mobile] .atlas-card>button,:root[data-layout=mobile] .gallery-buttons button{min-height:44px;font-size:.9rem}
+:root[data-layout=mobile] #gallery-actions{gap:8px}
+:root[data-layout=mobile] #gallery-actions button{min-height:44px}
+:root[data-layout=mobile] .article{padding:15px}
+:root[data-layout=mobile] .atlas-options{flex-wrap:wrap;font-size:.9rem;gap:5px}
+:root[data-layout=mobile] .atlas-options label{min-height:44px}
+:root[data-layout=mobile] #compare-diff{overflow-x:auto}
+:root[data-layout=mobile] #toast{max-width:95vw;width:max-content;text-align:center;font-size:.85rem;bottom:max(12px,env(safe-area-inset-bottom))}
+@media(max-width:350px){:root[data-layout=mobile] .brand{font-size:.88rem}:root[data-layout=mobile] .brand svg{display:none}:root[data-layout=mobile] .tools #language{max-width:67px}}
+@media(max-height:650px){:root[data-layout=mobile] #mobile-preview{height:165px}:root[data-layout=mobile] #mobile-task-host{max-height:125px}:root[data-layout=mobile] .topbar{height:48px}:root[data-layout=mobile] main{height:calc(100dvh - 48px)}}
+@media(max-height:500px) and (min-width:600px){:root[data-layout=mobile] #mobile-shell:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:44px minmax(0,1fr);gap:5px}:root[data-layout=mobile] #mobile-preview{grid-column:1;grid-row:1/3;height:100%!important}:root[data-layout=mobile] #mobile-tabs{grid-column:2;grid-row:1}:root[data-layout=mobile] #mobile-workarea{grid-column:2;grid-row:2}:root[data-layout=mobile] #mobile-task-host:not([hidden]){grid-column:1;grid-row:2;z-index:3;align-self:end;max-height:100px;box-shadow:0 -3px 12px #0004}}
+:root[data-layout=mobile] body{position:fixed;inset:0;width:100%;height:100dvh}
+:root[data-layout=mobile] .camera-panel>.panel-title{display:none}
+:root[data-layout=mobile] .camera-canvas-wrap{height:clamp(160px,23dvh,215px)}
+:root[data-layout=mobile] .room-panel>.panel-title h2{display:none}
+:root[data-layout=mobile] #mobile-room-object{display:block;min-width:110px;max-width:48%;font-size:.9rem;min-height:40px;padding:5px}
+/* Only the work area may scroll. clip also prevents focus/rotation from scrolling the fixed shell. */
+:root[data-layout=mobile],:root[data-layout=mobile] body{overflow:clip}
+:root[data-layout=mobile] #mobile-lesson-filter{padding:4px 10px;margin:0 0 5px;border:1px solid var(--line);border-radius:7px;background:var(--paper)}
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=aperture] #mobile-panel-controls #main-controls .control:not(:has(#aperture)):not(:has(#focus)),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=motion] #mobile-panel-controls #main-controls .control:has(#focal,#focus),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=crop] #mobile-panel-controls #main-controls .control:not(:has(#focal)),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=iso] #mobile-panel-controls #main-controls .control:not(:has(#time)):not(:has(#iso)),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=focus] #mobile-panel-controls #main-controls .control:not(:has(#focus)),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=color] #mobile-panel-controls #advanced-controls .control:not(:has(#wb)):not(:has(#nd)),
+:root[data-layout=mobile][data-mobile-all=false][data-lesson=phone] #mobile-panel-controls #advanced-controls{display:none!important}

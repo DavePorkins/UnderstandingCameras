@@ -1,14 +1,14 @@
 import {metrics,cameraModel,clamp,distanceText,shutterText,actors,actorDistance} from './physics.mjs';
 import {tr} from './i18n.mjs';
 const lightColors={ink:'#274b40',muted:'#7b8e7e',teal:'#2a8b78',amber:'#bd8b37',coral:'#bf7055',line:'#cbd8c3'},darkColors={ink:'#dce9e1',muted:'#a9bcb0',teal:'#72d0b8',amber:'#e7bc70',coral:'#e99e83',line:'#52655c'},colors={...lightColors};
-let diagramDark=false;
+let diagramDark=false,diagramMobile=false,diagramRatio=1;
 const darkDiagramColors={'#f4f6eb':'#192821','#c06d55':'#efa68c','#739363':'#a9cd91','#6d8fa6':'#9bbfd9','#cbd8c3':'#52655c','#b8c7ae':'#52655c','#b59b62':'#cfb77e','#8c9a83':'#b5c3a8','#bc9d51':'#e3c77e','#e7eedf':'#263d32','#35594a':'#668c78','#e8efcf':'#d8e8bd','#d0e6d1':'#426851','#eeddbb':'#92743b','#d6c695':'#a18f58','#aab99d':'#6b8171'};
 function diagramColor(value){return diagramDark?(darkDiagramColors[value.slice(0,7)]||value.slice(0,7))+value.slice(7):value;}
 function stroke(c,points,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=diagramColor(color);c.lineWidth=width;c.stroke();c.setLineDash([]);}
-function textAt(c,t,x,y,size,color=colors.ink,align='center'){c.fillStyle=diagramColor(color);c.font=`${size}px system-ui,sans-serif`;c.textAlign=align;c.fillText(tr(t),x,y);}
+function textAt(c,t,x,y,size,color=colors.ink,align='center'){c.fillStyle=diagramColor(color);c.font=`${diagramMobile?Math.max(size,10*diagramRatio):size}px system-ui,sans-serif`;c.textAlign=align;c.fillText(tr(t),x,y);}
 function dot(c,x,y,r,color){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=diagramColor(color);c.fill();}
 function rect(c,x,y,w,h,color,r=0){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=diagramColor(color);c.fill();}
-function setup(canvas){diagramDark=typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';Object.assign(colors,diagramDark?darkColors:lightColors);const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=W/900;c.clearRect(0,0,W,H);c.fillStyle=diagramColor('#f4f6eb');c.fillRect(0,0,W,H);return {c,W,H,k};}
+function setup(canvas){diagramDark=typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';diagramMobile=typeof document!=='undefined'&&document.documentElement.dataset.layout==='mobile';diagramRatio=diagramMobile?canvas.width/Math.max(1,canvas.getBoundingClientRect().width):1;Object.assign(colors,diagramDark?darkColors:lightColors);const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=W/900;c.clearRect(0,0,W,H);c.fillStyle=diagramColor('#f4f6eb');c.fillRect(0,0,W,H);return {c,W,H,k};}
 export const raySubjects={person:{name:'Person',color:'#c06d55',height:.6},plant:{name:'Pflanze',color:'#739363',height:-.1},background:{name:'Hintergrund',color:'#6d8fa6',height:1.25}};
 export function cutawayGeometry(W,H,state){
  const m=metrics(state),s=m.s,k=W/900,cy=H*.35,half=Math.min(H*.19,W*.14);
@@ -70,8 +70,8 @@ export function drawRoom(canvas,state,{selected='person',bounds}={}){
  if(s.lampOn){const lx=x(s.lampZ),ly=y(s.lampX);c.save();c.fillStyle='#dcb04e28';if(s.lampType==='spot'){const angle=s.lampAngle*Math.PI/180,length=7;c.beginPath();c.moveTo(lx,ly);for(const a of[angle-.5,angle+.5])c.lineTo(x(s.lampZ+Math.cos(a)*length),y(s.lampX+Math.sin(a)*length));c.closePath();c.fill();}else{const radius=clamp(Math.sqrt(2**(s.lampEV-s.ev)*4),1.5,12);c.translate(lx,ly);c.scale(scale,sideScale);const glow=c.createRadialGradient(0,0,0,0,0,radius);glow.addColorStop(0,'#d9ac3b44');glow.addColorStop(1,'#d9ac3b00');c.fillStyle=glow;c.beginPath();c.arc(0,0,radius,0,7);c.fill();}c.restore();}
  const hits=[];for(const [id,a]of Object.entries(actors)){if(id==='lamp'&&!s.lampOn)continue;const zz=id==='camera'?-s.cameraBack:s[a.z],xx=x(zz),yy=id==='background'?H*.16:y(a.x?s[a.x]:0),color=id==='person'?'#c06d55':id==='plant'?'#739363':id==='background'?'#6d8fa6':id==='ball'?'#bc9d51':id==='sculpture'?'#8c9a83':colors.teal;
   if(id===selected)dot(c,xx,yy,19*k,color+'26');
-  if(id==='camera'){rect(c,xx-16*k,yy-12*k,27*k,24*k,colors.ink,4*k);rect(c,xx+9*k,yy-7*k,10*k,14*k,colors.teal,2*k);}else{if(id==='background')stroke(c,[[xx,H*.1],[xx,H*.73]],'#9aad91',2*k);dot(c,xx,yy,10*k,color);dot(c,xx,yy,3.5*k,'#ffffef');}
-  const up=id==='ball'||id==='sculpture'||id==='lamp',name=id==='lamp'?(s.lampType==='spot'?'Spot':'Laterne'):a.name;textAt(c,name,xx,yy+(up?-18:26)*k,17*k,color);hits.push({id,x:xx,y:yy,scale,margin,minZ});
+  if(id==='camera'){const icon=diagramMobile?Math.max(k,.65*diagramRatio):k;rect(c,xx-16*icon,yy-12*icon,27*icon,24*icon,colors.ink,4*icon);rect(c,xx+9*icon,yy-7*icon,10*icon,14*icon,colors.teal,2*icon);}else{if(id==='background')stroke(c,[[xx,H*.1],[xx,H*.73]],'#9aad91',2*k);dot(c,xx,yy,diagramMobile?Math.max(10*k,7*diagramRatio):10*k,color);dot(c,xx,yy,3.5*k,'#ffffef');}
+  const up=id==='ball'||id==='sculpture'||id==='lamp',name=id==='lamp'?(s.lampType==='spot'?'Spot':'Laterne'):a.name;if(!diagramMobile||id===selected||id==='camera'||id==='background')textAt(c,name,xx,yy+(up?-18:26)*(diagramMobile?Math.max(k,.8*diagramRatio):k),17*k,color);hits.push({id,x:xx,y:yy,scale,margin,minZ});
  }
  textAt(c,'Links im Bild',margin,H*.07,12*k,colors.muted,'left');textAt(c,'Rechts im Bild',margin,H*.79,12*k,colors.muted,'left');
  stroke(c,[[margin,H*.89],[W-margin,H*.89]],'#aab99d',k);const tick=Math.max(5,Math.ceil((maxZ-minZ)/50)*5);for(let z=Math.ceil(minZ/tick)*tick;z<=maxZ;z+=tick){stroke(c,[[x(z),H*.89],[x(z),H*.91]],'#aab99d',k);textAt(c,`${z} m`,x(z),H*.99,15*k,colors.muted);}
