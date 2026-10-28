@@ -1,4 +1,4 @@
-import {metrics,clamp,distanceText,sensors,crop} from './physics.mjs';
+import {metrics,clamp,distanceText,sensors,crop,cameraModel,shutterText} from './physics.mjs';
 const C={ink:'#24483f',muted:'#798b7c',grid:'#dde5d6',teal:'#278b7b',amber:'#c38c39',coral:'#c56b53'};
 function line(c,x1,y1,x2,y2,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);c.moveTo(x1,y1);c.lineTo(x2,y2);c.strokeStyle=color;c.lineWidth=width;c.stroke();c.setLineDash([]);}
 function label(c,t,x,y,size=12,color=C.ink,align='left'){c.font=`${size}px ${size<11?'ui-monospace,Consolas':'system-ui,sans-serif'}`;c.fillStyle=color;c.textAlign=align;c.fillText(t,x,y);c.textAlign='left';}
@@ -9,15 +9,18 @@ function arrow(c,x,y,dir,color){poly(c,[[x,y],[x-dir*8,y-4],[x-dir*8,y+4]],color
 function dimension(c,x1,x2,y,t,color=C.muted){line(c,x1,y,x2,y,color);arrow(c,x1,y,-1,color);arrow(c,x2,y,1,color);label(c,t,(x1+x2)/2,y-7,10,color,'center');}
 const canvases=new Map();
 function buffer(key,w,h){let cv=canvases.get(key);if(!cv){cv=document.createElement('canvas');canvases.set(key,cv);}if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}const c=cv.getContext('2d',{willReadFrequently:true});c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);c.filter='none';c.globalAlpha=1;c.globalCompositeOperation='source-over';return [cv,c];}
-export function sceneObjects(s,t=0){return [
+export function sceneObjects(s,t=0){const offset=(v,span)=>v?((t*v+span/2)%span)-span/2:0;return [
  {id:'wall',type:'wall',x:0,z:s.background,height:3.8},
  {id:'tree-left',type:'tree',x:-3.2,z:s.background-.5,height:3.5},
  {id:'tree-right',type:'tree',x:3.7,z:s.background-1,height:4},
  {id:'bench',type:'bench',x:-1.7,z:s.background-2,height:.8},
- {id:'sculpture',type:'sculpture',x:2,z:Math.max(s.subject+2,s.background-3),height:1.9},
- {id:'person',type:'person',x:s.subjectX+(s.motion?Math.sin(t*s.speed*.4)*.6:0),z:s.subject,height:1.75,moving:true},
+ {id:'sculpture',type:'sculpture',x:2,z:9,height:1.9},
+ {id:'person',type:'person',x:s.subjectX+offset(s.speed,2.8),z:s.subject,height:1.75,speed:s.speed},
+ ...(s.waveSpeed>0?[{id:'hand',type:'hand',x:s.subjectX+offset(s.speed,2.8),z:s.subject,height:1.95,speed:s.speed+s.waveSpeed}]:[]),
  {id:'plant',type:'plant',x:-1.2,z:s.foreground,height:1.05},
- {id:'ball',type:'ball',x:s.subjectX+.95+(s.motion?Math.sin(t*s.speed*.6)*.5:0),z:s.subject+.6,height:.35,moving:true},
+ {id:'ball',type:'ball',x:.95+offset(s.ballSpeed,3.2),z:s.ballDistance,height:.35,speed:s.ballSpeed},
+ {id:'bird',type:'bird',x:-.9+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.25,speed:s.birdSpeed},
+ {id:'wings',type:'wings',x:-.9+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.25,speed:s.birdSpeed*1.7},
  ].sort((a,b)=>b.z-a.z);}
 export function drawPhoto(canvas,state,t=0,opts={}){
  const m=metrics(state),s=m.s,sensor=m.sensor,W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
@@ -38,7 +41,7 @@ export function drawPhoto(canvas,state,t=0,opts={}){
  const boxes=[];
  for(const obj of objList){
   l.clearRect(0,0,rw,rh);l.filter='none';l.globalAlpha=1;
-  const [px,py,q]=project(obj.x,0,obj.z),size=obj.height*q;
+  const [px,py,q]=project(obj.x,obj.y||0,obj.z),size=obj.height*q;
   if(px+size<0||px-size>rw||py-size>rh||py<0)continue;
   l.save();l.translate(px,py);l.scale(q,q);
   if(obj.type==='wall'){
@@ -72,18 +75,29 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   }
   if(obj.type==='person'){
    l.globalAlpha=.2;l.beginPath();l.ellipse(.1,0,.42,.07,0,0,7);l.fillStyle='#53624a';l.fill();l.globalAlpha=1;
-   const leg=s.motion&&s.speed>0?Math.sin(t*s.speed*4)*.09:0;
+   const leg=s.speed>0?Math.sin(t*s.speed*4)*.09:0;
    poly(l,[[-.21,-.82],[-.01,-.82],[-.06+leg,-.11],[-.21+leg,-.08]],'#485a53');
    poly(l,[[.02,-.82],[.2,-.82],[.24-leg,-.07],[.08-leg,-.09]],'#394e48');
    rounded(l,-.24+leg,-.1,.23,.09,.025,'#e9e7d8');rounded(l,.07-leg,-.09,.27,.09,.025,'#e9e7d8');
    rounded(l,-.26,-1.42,.52,.67,.08,'#c67a59');
    poly(l,[[-.23,-1.4],[-.36,-1.36],[-.43,-.85],[-.29,-.82],[-.13,-1.25]],'#b2644e');
-   poly(l,[[.23,-1.4],[.35,-1.33],[.43,-.9],[.29,-.84],[.15,-1.22]],'#d18b68');
-   circle(l,-.36,-.82,.075,'#ddba8f');circle(l,.36,-.85,.075,'#ddba8f');
+   if(s.waveSpeed===0){poly(l,[[.23,-1.4],[.35,-1.33],[.43,-.9],[.29,-.84],[.15,-1.22]],'#d18b68');circle(l,.36,-.85,.075,'#ddba8f');}
+   circle(l,-.36,-.82,.075,'#ddba8f');
    l.fillStyle='#deb993';l.fillRect(-.07,-1.52,.14,.17);circle(l,0,-1.59,.15,'#dfbd98');
    l.beginPath();l.arc(-.015,-1.64,.16,Math.PI,Math.PI*2.05);l.fillStyle='#514b38';l.fill();
    line(l,0,-1.36,0,-.78,'#edd0a4',.016);line(l,-.16,-.99,-.06,-.99,'#ab5d4b',.012);line(l,.07,-.99,.18,-.99,'#ab5d4b',.012);
    circle(l,-.055,-1.59,.009,'#564b3c');circle(l,.055,-1.59,.009,'#564b3c');line(l,-.035,-1.53,.04,-1.53,'#b07e62',.01);
+  }
+  if(obj.type==='hand'){
+   const handX=.48+Math.sin(t*s.waveSpeed*4)*.12;
+   poly(l,[[.2,-1.42],[.34,-1.44],[.48,-1.2],[handX+.07,-1.8],[handX-.06,-1.83],[.33,-1.37]],'#d18b68');
+   circle(l,handX,-1.85,.073,'#ddba8f');
+  }
+  if(obj.type==='bird'){
+   l.fillStyle='#526c68';l.beginPath();l.ellipse(0,0,.2,.065,-.1,0,7);l.fill();circle(l,.17,-.05,.06,'#405a56');poly(l,[[.22,-.06],[.31,-.045],[.22,-.015]],'#bd985b');poly(l,[[-.14,0],[-.32,-.04],[-.25,.08]],'#536d69');
+  }
+  if(obj.type==='wings'){
+   const flap=Math.sin(t*s.birdSpeed*3)*.18;poly(l,[[-.02,0],[-.28,-.28+flap],[-.1,-.26+flap],[.1,0]],'#6b8179');poly(l,[[.02,0],[.26,-.23-flap],[.32,-.16-flap],[.12,.03]],'#738b7d');
   }
   if(obj.type==='plant'){
    l.globalAlpha=.17;l.beginPath();l.ellipse(.08,0,.4,.065,0,0,7);l.fillStyle='#425136';l.fill();l.globalAlpha=1;
@@ -100,7 +114,7 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   blur=Math.sqrt(blur*blur+diffraction*diffraction);
   if(s.portrait&&s.sensor==='phone'&&obj.z>s.subject+1)blur=Math.max(blur,10);
   c.save();c.filter=`blur(${clamp(blur,0,36)}px)`;
-  const smear=obj.moving?m.motionMM/sensor.w*rw:0;
+  const smear=(obj.speed||0)*s.focal*s.time/Math.max(obj.z+s.cameraBack,.1)/sensor.w*rw;
   const copies=smear>1?Math.min(19,Math.ceil(smear/2)):1;
   if(copies===1)c.drawImage(layer,0,0);
   else {const[mv,mc]=buffer('movement',rw,rh);mc.globalCompositeOperation='lighter';mc.globalAlpha=1/copies;for(let n=0;n<copies;n++){const shift=(n/(copies-1)-.5)*Math.min(smear,rw);mc.drawImage(layer,shift,0);}c.drawImage(mv,0,0);}
@@ -127,70 +141,6 @@ export function drawPhoto(canvas,state,t=0,opts={}){
  return {boxes,imageRect:{x:x0,y:y0,w,h}};
 }
 function base(canvas){const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;c.clearRect(0,0,W,H);c.fillStyle='#f5f6ed';c.fillRect(0,0,W,H);for(let x=20;x<W;x+=25)for(let y=20;y<H;y+=25)circle(c,x,y,.65,'#dbe1d2');return {c,W,H};}
-export function drawOptics(canvas,state){
- const {c,W,H}=base(canvas),m=metrics(state),s=m.s;const sx=W/1000,sy=H/600;c.save();c.scale(sx,sy);
- const cy=285,lx=475,sensorX=825,objX=90,top=cy-94;
- label(c,'VOM MOTIV ZUM SENSOR',36,65,12,C.muted);
- // Cutaway outlines show where the ideal optical model sits in a camera.
- c.strokeStyle='#b6c7b6';c.lineWidth=1.5;
- c.strokeRect(432,cy-131,106,262);
- c.beginPath();c.moveTo(538,cy-98);c.lineTo(645,cy-98);c.lineTo(645,cy-131);c.lineTo(875,cy-131);c.lineTo(875,cy+131);c.lineTo(645,cy+131);c.lineTo(645,cy+98);c.lineTo(538,cy+98);c.stroke();
- label(c,'Objektiv',485,cy-143,10,C.muted,'center');
- label(c,'Kameragehäuse · Aufnahme',747,cy-155,10,C.muted,'center');
- // Shutter curtains are fully retracted during the idealized exposure.
- rounded(c,790,cy-117,12,22,2,'#899c8b');rounded(c,790,cy+95,12,22,2,'#899c8b');
- if(s.body==='dslr'){line(c,647,cy-119,740,cy-119,'#819588',4);line(c,647,cy-89,724,cy+1,'#9eaea2',1,[4,5]);label(c,'Spiegel oben',692,cy-132,9,C.muted,'center');}
- const objectDistance=(s.subject+s.cameraBack)*1000,focusDistance=s.focus*1000;
- const vObj=s.focal*objectDistance/(objectDistance-s.focal),vFocus=m.v;
- const imageX=lx+(sensorX-lx)*vObj/vFocus;
- const iy=cy+(cy-top)*(imageX-lx)/(lx-objX);
- const aperture=clamp(m.apertureDiameter*3.2,8,155);
- line(c,35,cy,940,cy,'#aebcab',1,[5,6]);
- // Rays leave the object, pass the aperture and intersect on its conjugate image plane.
- for(const off of[-aperture/2,0,aperture/2]){
-  const yy=cy+off,atSensor=yy+(iy-yy)*(sensorX-lx)/(imageX-lx);
-  line(c,objX,top,lx,yy,off===0?'#d3a051':'#b88636',1.8);
-  line(c,lx,yy,sensorX,atSensor,off===0?'#d3a051':'#b88636',1.8);
-  if(Math.abs(imageX-sensorX)>1)line(c,sensorX,atSensor,imageX,iy,'#b88636',1,[3,4]);
- }
- poly(c,[[objX,cy],[objX,top],[objX-6,top+10],[objX,top-7],[objX+6,top+10],[objX,top]],C.coral);
- label(c,'Motivpunkt',objX,cy+30,12,C.coral,'center');label(c,distanceText(s.subject+s.cameraBack),objX,cy+49,10,C.muted,'center');
- // Lens principal plane; housing is a diagram, not a real optical prescription.
- c.beginPath();c.ellipse(lx,cy,17,119,0,0,7);c.fillStyle='#9ac6b540';c.fill();c.strokeStyle='#7ba797';c.lineWidth=2;c.stroke();
- c.fillStyle='#415f52';c.fillRect(lx-5,cy-124,10,124-aperture/2);c.fillRect(lx-5,cy+aperture/2,10,124-aperture/2);
- label(c,'Dünne Linse + Blende',lx,cy+153,12,C.ink,'center');label(c,`D = f / N = ${m.apertureDiameter.toFixed(1)} mm`,lx,cy+174,11,C.teal,'center');
- c.fillStyle='#387a69';c.fillRect(sensorX-3,cy-115,6,230);label(c,'Sensor',sensorX,cy-137,12,C.teal,'center');
- circle(c,imageX,iy,4,C.coral);label(c,'invertiertes Bild',imageX+13,iy+5,10,C.coral);
- const blur=m.blurAt(s.subject+s.cameraBack);const blurR=clamp(blur*850,2,35);circle(c,sensorX,iy,blurR,'#c77b5550');
- dimension(c,objX,lx,cy+98,`Gegenstandsweite u = ${distanceText(s.subject+s.cameraBack)}`);
- dimension(c,lx,sensorX,cy-182,`Bildweite v = ${vFocus.toFixed(2)} mm`,C.teal);
- // Sensor-plane detail separates focus error from visual compression of axial distances.
- rounded(c,665,440,290,118,8,'#e7eee1');label(c,'SENSORDETAIL · STARK VERGRÖSSERT',682,462,9,C.muted);
- circle(c,705,504,clamp(blur*900,2,30),'#be8b4670');circle(c,705,504,2,C.amber);
- label(c,`Unschärfekreis: ${(blur*1000).toFixed(1)} µm`,746,493,11,C.ink);label(c,`Schärfekriterium: ${(m.coc*1000).toFixed(1)} µm`,746,514,10,C.muted);
- label(c,blur<=m.coc?'innerhalb des Kriteriums':'größer als das Kriterium',746,535,10,blur<=m.coc?C.teal:C.coral);
- label(c,`Fokus: ${distanceText(s.focus)}  ·  1/f = 1/u + 1/v`,38,497,13,C.ink);
- label(c,'Axiale Abstände verkürzt; Strahlhöhen schematisch.',38,523,10,C.muted);
- label(c,'ISO ändert die Verstärkung nach dem Sensor, nicht diese Strahlen.',38,545,10,C.muted);
- if(s.body==='dslr')label(c,'DSLR: Während der Aufnahme ist der Spiegel hochgeklappt.',38,571,10,C.muted);
- c.restore();
-}
-export function drawSpace(canvas,state){
- const {c,W,H}=base(canvas),m=metrics(state),s=m.s;const margin=80,maxZ=Math.max(20,s.background+s.cameraBack+4,s.focus+3),scale=(W-margin*2)/maxZ,cy=H*.48;
- const map=z=>margin+z*scale;label(c,'RAUMPLAN · DRAUFSICHT',30,55,12,C.muted);
- const nf=map(Math.min(maxZ,m.near)),ff=map(Math.min(maxZ,m.far));c.fillStyle='#3c998619';c.fillRect(nf,90,Math.max(ff-nf,0),H-190);
- const fan=Math.min(220,Math.tan(m.fov*Math.PI/360)*(W-2*margin));poly(c,[[margin,cy],[W-margin,cy-fan],[W-margin,cy+fan]],'#bd913213');
- line(c,margin,cy,W-margin,cy-fan,'#c8a766',1,[5,4]);line(c,margin,cy,W-margin,cy+fan,'#c8a766',1,[5,4]);
- rounded(c,margin-27,cy-18,33,36,5,C.ink);rounded(c,margin+3,cy-11,14,22,3,C.teal);label(c,'Kamera',margin,cy+46,11,C.ink,'center');
- for(let z=0;z<=maxZ;z+=2){const x=map(z);line(c,x,H-80,x,H-74,C.muted);label(c,`${z} m`,x,H-55,10,C.muted,'center');}
- line(c,margin,H-80,W-margin,H-80,C.muted);
- const focus=map(s.focus);line(c,focus,90,focus,H-100,C.teal,2,[5,4]);label(c,'FOKUSEBENE',focus,77,10,C.teal,'center');
- const items=[{key:'foreground',z:s.foreground+s.cameraBack,y:cy-(-1.2-s.cameraX)*scale,color:'#7c9b64',name:'Pflanze'},{key:'subject',z:s.subject+s.cameraBack,y:cy-(s.subjectX-s.cameraX)*scale,color:C.coral,name:'Person'},{key:'background',z:s.background+s.cameraBack,y:cy-3.2*scale,color:'#899b85',name:'Hintergrund'}];
- const hits=[];items.forEach(o=>{const x=map(o.z);circle(c,x,o.y,15,o.color);circle(c,x,o.y,5,'#fff9');line(c,x,o.y+21,x,o.y+34,o.color);label(c,o.name,x,o.y+50,12,o.color,'center');label(c,distanceText(o.z),x,o.y+68,10,C.muted,'center');hits.push({key:o.key,x,y:o.y,z:o.z,scale,margin});});
- label(c,`Scharf erscheinend: ${distanceText(m.near)} bis ${distanceText(m.far)}`,30,H-20,12,C.teal);
- label(c,'Punkte ziehen: Abstand ändern · leere Stelle anklicken: fokussieren',W-25,H-20,10,C.muted,'right');
- return {hits,scale,margin,maxZ};
-}
 export function drawSensors(canvas,state){
  const {c,W,H}=base(canvas),m=metrics(state),scale=Math.min(W/115,H/67),cx=W*.37,cy=H*.53;
  label(c,'SENSORFLÄCHE · RELATIVE GRÖSSEN',30,55,12,C.muted);

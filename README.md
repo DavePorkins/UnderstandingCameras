@@ -28,6 +28,10 @@ Im portablen Übergabepaket liegen die Webdateien bereits im Wurzelverzeichnis. 
 
 Für das originale Sites-Projekt zeigt `.openai/hosting.json` auf `dist`. Diese Identitätsdatei gehört ausschließlich zu diesem konkreten Sites-Projekt und wird deshalb nicht in das plattformneutrale Übergabepaket kopiert.
 
+## Beamer-Arbeitsfläche (V2)
+
+Die Hauptansicht füllt das Fenster dauerhaft. Kameraquerschnitt, Raum und Aufnahme sind gleichzeitig sichtbar. Die Oberfläche ist für Desktop und 16:9-Projektion ausgelegt und bei 1280 × 720 sowie 1920 × 1080 auf Überlauf geprüft. Zusatzeinstellungen, Experimente und Quellen öffnen in Fenstern. `camera-view.mjs` enthält das neue Zwei-Gruppen-Kameraschema und den Raumplan. Gehen, Hand, Ball und Vogel haben getrennte Bewegungsparameter.
+
 ## Umfang
 
 - Sechs generische Sensorprofile, frei kombinierbare Lehr-Optik und zwei Bauarten.

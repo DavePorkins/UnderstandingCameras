@@ -10,7 +10,7 @@ export const sensors = {
 export const apertures=[1.4,2,2.8,4,5.6,8,11,16,22];
 export const shutters=[1/8000,1/4000,1/2000,1/1000,1/500,1/250,1/125,1/60,1/30,1/15,1/8,1/4,1/2,1,2];
 export const isos=[100,200,400,800,1600,3200,6400,12800];
-export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:2.8,time:1/250,iso:100,mode:'M',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,speed:1.5,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:true,scene:'courtyard'};
+export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:2.8,time:1/250,iso:100,mode:'M',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,speed:0,waveSpeed:1.2,ballSpeed:2.5,birdSpeed:4,ballDistance:6,birdDistance:8,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:true,scene:'courtyard'};
 export const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 export const nearest=(a,n)=>a.reduce((x,y)=>Math.abs(Math.log(y/n))<Math.abs(Math.log(x/n))?y:x);
 export function crop(s){return Math.hypot(36,24)/Math.hypot(s.w,s.h);}
@@ -53,12 +53,32 @@ export function changeSensor(s,id){
  const focal=s.matchFrame?s.focal*next.w/prev.w:s.focal;
  return {...s,sensor:id,mp:next.mp,focal:clamp(focal,2,200),aperture:id==='phone'?1.8:s.aperture};
 }
+// Two ideal thin groups with a physically separate iris. Paraxial construction,
+// not a real lens prescription. Distances are from the principal planes.
+export function cameraModel(input){
+ const m=metrics(input),s=m.s,f=s.focal,d=.4*f,g=f+Math.sqrt(f*f-f*d),h=f*d/g;
+ const stopFactor=1-d/(2*g),irisDiameter=m.apertureDiameter*stopFactor;
+ const objectU=(s.subject+s.cameraBack)*1000,firstDistance=objectU-h;
+ const objectY=Math.min(600,objectU*.12);
+ const sensorZ=d-h+m.v;
+ const conjugateZ=d-h+f*objectU/(objectU-f);
+ const rays=[-.5,0,.5].map(q=>{
+  const irisY=q*irisDiameter;
+  let angle=(irisY-objectY*stopFactor)/(firstDistance*stopFactor+d/2);
+  const firstY=objectY+angle*firstDistance;
+  angle-=firstY/g;
+  const rearY=firstY+angle*d;
+  angle-=rearY/g;
+  return {firstY,irisY,rearY,angle,sensorY:rearY+angle*(sensorZ-d),imageY:rearY+angle*(conjugateZ-d)};
+ });
+ return {f,d,g,h,irisDiameter,entranceDiameter:m.apertureDiameter,sensorZ,conjugateZ,objectY,rays};
+}
 export function encodeState(s){return encodeURIComponent(JSON.stringify(s));}
 export function decodeState(hash){
  try {const raw=JSON.parse(decodeURIComponent(hash.replace(/^#(?:s=)?/,''))),out={...defaults};
   for(const [k,v]of Object.entries(raw)){if(!(k in defaults)||typeof v!==typeof defaults[k])continue;if(typeof v==='number'&&!Number.isFinite(v))continue;out[k]=v;}
   if(!Object.hasOwn(sensors,out.sensor))out.sensor='full';
-  const limits={focal:[2,200],aperture:[1.4,22],time:[1/8000,2],iso:[100,12800],ev:[3,16],comp:[-3,3],nd:[0,10],focus:[0.3,80],subject:[1.5,15],background:[6,40],foreground:[1,8],cameraBack:[0,8],cameraX:[-3,3],subjectX:[-2,2],speed:[0,12],wb:[2500,10000],temperature:[2500,10000],mp:[8,100]};
+  const limits={focal:[2,200],aperture:[1.4,22],time:[1/8000,2],iso:[100,12800],ev:[3,16],comp:[-3,3],nd:[0,10],focus:[0.3,50],subject:[1.5,15],background:[6,40],foreground:[1,8],cameraBack:[0,8],cameraX:[-3,3],subjectX:[-2,2],speed:[0,12],waveSpeed:[0,12],ballSpeed:[0,12],birdSpeed:[0,12],ballDistance:[2,18],birdDistance:[2,25],wb:[2500,10000],temperature:[2500,10000],mp:[8,100]};
   for(const[k,[a,b]]of Object.entries(limits))out[k]=clamp(out[k],a,b);
   if(!['M','A','S'].includes(out.mode))out.mode='M';
   if(!['standard','pixel'].includes(out.cocMode))out.cocMode='standard';
