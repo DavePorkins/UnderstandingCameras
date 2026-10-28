@@ -1,4 +1,4 @@
-import {metrics,clamp,distanceText,sensors,crop,cameraModel,shutterText} from './physics.mjs';
+import {metrics,clamp,distanceText,sensors,crop} from './physics.mjs';
 const C={ink:'#24483f',muted:'#798b7c',grid:'#dde5d6',teal:'#278b7b',amber:'#c38c39',coral:'#c56b53'};
 function line(c,x1,y1,x2,y2,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);c.moveTo(x1,y1);c.lineTo(x2,y2);c.strokeStyle=color;c.lineWidth=width;c.stroke();c.setLineDash([]);}
 function label(c,t,x,y,size=12,color=C.ink,align='left'){c.font=`${size}px ${size<11?'ui-monospace,Consolas':'system-ui,sans-serif'}`;c.fillStyle=color;c.textAlign=align;c.fillText(t,x,y);c.textAlign='left';}
@@ -9,18 +9,21 @@ function arrow(c,x,y,dir,color){poly(c,[[x,y],[x-dir*8,y-4],[x-dir*8,y+4]],color
 function dimension(c,x1,x2,y,t,color=C.muted){line(c,x1,y,x2,y,color);arrow(c,x1,y,-1,color);arrow(c,x2,y,1,color);label(c,t,(x1+x2)/2,y-7,10,color,'center');}
 const canvases=new Map();
 function buffer(key,w,h){let cv=canvases.get(key);if(!cv){cv=document.createElement('canvas');canvases.set(key,cv);}if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}const c=cv.getContext('2d',{willReadFrequently:true});c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);c.filter='none';c.globalAlpha=1;c.globalCompositeOperation='source-over';return [cv,c];}
+export function grainSample(index){let v=(index^0x9e3779b9)>>>0;v^=v>>>16;v=Math.imul(v,0x7feb352d);v^=v>>>15;v=Math.imul(v,0x846ca68b);v^=v>>>16;return (((v&255)+((v>>>8)&255)+((v>>>16)&255)+((v>>>24)&255))/255-2)*1.7320508075688772;}
+export function armPose(s,t){const shoulder=[.20,-1.32],elbow=[.40,-1.37],length=.43,amplitude=.65,omega=s.waveSpeed/(length*amplitude),angle=-Math.PI/2+amplitude*Math.sin(t*omega);return {shoulder,elbow,wrist:[elbow[0]+length*Math.cos(angle),elbow[1]+length*Math.sin(angle)]};}
+export function motionSmearPixels(s,speed,z,width){return speed*s.focal*s.time/Math.max(z+s.cameraBack,.1)/sensors[s.sensor].w*width;}
 export function sceneObjects(s,t=0){const offset=(v,span)=>v?((t*v+span/2)%span)-span/2:0;return [
  {id:'wall',type:'wall',x:0,z:s.background,height:3.8},
  {id:'tree-left',type:'tree',x:-3.2,z:s.background-.5,height:3.5},
  {id:'tree-right',type:'tree',x:3.7,z:s.background-1,height:4},
  {id:'bench',type:'bench',x:-1.7,z:s.background-2,height:.8},
- {id:'sculpture',type:'sculpture',x:2,z:9,height:1.9},
+ {id:'sculpture',type:'sculpture',x:s.sculptureX,z:s.sculpture,height:1.9},
  {id:'person',type:'person',x:s.subjectX+offset(s.speed,2.8),z:s.subject,height:1.75,speed:s.speed},
- ...(s.waveSpeed>0?[{id:'hand',type:'hand',x:s.subjectX+offset(s.speed,2.8),z:s.subject,height:1.95,speed:s.speed+s.waveSpeed}]:[]),
- {id:'plant',type:'plant',x:-1.2,z:s.foreground,height:1.05},
- {id:'ball',type:'ball',x:.95+offset(s.ballSpeed,3.2),z:s.ballDistance,height:.35,speed:s.ballSpeed},
- {id:'bird',type:'bird',x:-.9+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.25,speed:s.birdSpeed},
- {id:'wings',type:'wings',x:-.9+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.25,speed:s.birdSpeed*1.7},
+ ...(s.waveSpeed>0?[{id:'hand',type:'hand',x:s.subjectX+offset(s.speed,2.8),z:s.subject,height:1.95,speed:s.speed,waveSpeed:s.waveSpeed}]:[]),
+ {id:'plant',type:'plant',x:s.plantX,z:s.foreground,height:1.05},
+ {id:'ball',type:'ball',x:s.ballX+offset(s.ballSpeed,3.2),z:s.ballDistance,height:.35,speed:s.ballSpeed},
+ {id:'bird',type:'bird',x:s.birdX+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.25,width:.65,speed:s.birdSpeed},
+ {id:'wings',type:'wings',x:s.birdX+offset(s.birdSpeed,6),z:s.birdDistance,y:2.6,height:.4,width:.65,speed:s.birdSpeed*1.7},
  ].sort((a,b)=>b.z-a.z);}
 export function drawPhoto(canvas,state,t=0,opts={}){
  const m=metrics(state),s=m.s,sensor=m.sensor,W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
@@ -82,6 +85,7 @@ export function drawPhoto(canvas,state,t=0,opts={}){
    rounded(l,-.26,-1.42,.52,.67,.08,'#c67a59');
    poly(l,[[-.23,-1.4],[-.36,-1.36],[-.43,-.85],[-.29,-.82],[-.13,-1.25]],'#b2644e');
    if(s.waveSpeed===0){poly(l,[[.23,-1.4],[.35,-1.33],[.43,-.9],[.29,-.84],[.15,-1.22]],'#d18b68');circle(l,.36,-.85,.075,'#ddba8f');}
+   else {const pose=armPose(s,t);l.beginPath();l.moveTo(...pose.shoulder);l.lineTo(...pose.elbow);l.strokeStyle='#d18b68';l.lineWidth=.18;l.lineCap='round';l.lineJoin='round';l.stroke();circle(l,...pose.shoulder,.095,'#c67a59');}
    circle(l,-.36,-.82,.075,'#ddba8f');
    l.fillStyle='#deb993';l.fillRect(-.07,-1.52,.14,.17);circle(l,0,-1.59,.15,'#dfbd98');
    l.beginPath();l.arc(-.015,-1.64,.16,Math.PI,Math.PI*2.05);l.fillStyle='#514b38';l.fill();
@@ -89,9 +93,11 @@ export function drawPhoto(canvas,state,t=0,opts={}){
    circle(l,-.055,-1.59,.009,'#564b3c');circle(l,.055,-1.59,.009,'#564b3c');line(l,-.035,-1.53,.04,-1.53,'#b07e62',.01);
   }
   if(obj.type==='hand'){
-   const handX=.48+Math.sin(t*s.waveSpeed*4)*.12;
-   poly(l,[[.2,-1.42],[.34,-1.44],[.48,-1.2],[handX+.07,-1.8],[handX-.06,-1.83],[.33,-1.37]],'#d18b68');
-   circle(l,handX,-1.85,.073,'#ddba8f');
+   const samples=Math.ceil(clamp(s.waveSpeed*s.time*q*1.5,1,36));
+   const left=Math.max(0,Math.floor(px-q*.01)),top=Math.max(0,Math.floor(py-q*2)),right=Math.min(rw,Math.ceil(px+q*.89)),bottom=Math.min(rh,Math.ceil(py-q*1.15));
+   if(right>left&&bottom>top){const[poseCanvas,pc]=buffer('hand-pose',right-left,bottom-top);l.setTransform(1,0,0,1,0,0);l.globalCompositeOperation='lighter';l.globalAlpha=1/samples;
+    for(let sample=0;sample<samples;sample++){pc.clearRect(0,0,poseCanvas.width,poseCanvas.height);pc.save();pc.translate(px-left,py-top);pc.scale(q,q);const dt=samples===1?0:(sample/(samples-1)-.5)*s.time,pose=armPose(s,t+dt);pc.beginPath();pc.moveTo(...pose.elbow);pc.lineTo(...pose.wrist);pc.strokeStyle='#d18b68';pc.lineWidth=.16;pc.lineCap='round';pc.lineJoin='round';pc.stroke();circle(pc,...pose.wrist,.075,'#ddba8f');pc.restore();l.drawImage(poseCanvas,left,top);}
+   }
   }
   if(obj.type==='bird'){
    l.fillStyle='#526c68';l.beginPath();l.ellipse(0,0,.2,.065,-.1,0,7);l.fill();circle(l,.17,-.05,.06,'#405a56');poly(l,[[.22,-.06],[.31,-.045],[.22,-.015]],'#bd985b');poly(l,[[-.14,0],[-.32,-.04],[-.25,.08]],'#536d69');
@@ -114,21 +120,19 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   blur=Math.sqrt(blur*blur+diffraction*diffraction);
   if(s.portrait&&s.sensor==='phone'&&obj.z>s.subject+1)blur=Math.max(blur,10);
   c.save();c.filter=`blur(${clamp(blur,0,36)}px)`;
-  const smear=(obj.speed||0)*s.focal*s.time/Math.max(obj.z+s.cameraBack,.1)/sensor.w*rw;
+  const smear=motionSmearPixels(s,obj.speed||0,obj.z,rw);
   const copies=smear>1?Math.min(19,Math.ceil(smear/2)):1;
   if(copies===1)c.drawImage(layer,0,0);
   else {const[mv,mc]=buffer('movement',rw,rh);mc.globalCompositeOperation='lighter';mc.globalAlpha=1/copies;for(let n=0;n<copies;n++){const shift=(n/(copies-1)-.5)*Math.min(smear,rw);mc.drawImage(layer,shift,0);}c.drawImage(mv,0,0);}
   c.restore();
-  if(obj.type!=='wall')boxes.push({id:obj.id,x:x0+(px-size*.3)/scale,y:y0+(py-size)/scale,w:size*.6/scale,h:size/scale,z:obj.z+s.cameraBack,sharp:m.blurAt(obj.z+s.cameraBack)<=m.coc});
+  if(obj.type!=='wall'){const bw=(obj.width||obj.height*.6)*q;boxes.push({id:obj.id,x:x0+(px-bw/2)/scale,y:y0+(py-size)/scale,w:bw/scale,h:size/scale,z:obj.z+s.cameraBack,sharp:m.blurAt(obj.z+s.cameraBack)<=m.coc});}
  }
  if(!s.tripod){const smear=s.time*s.focal*m.crop*(s.stabilization?.15:1)*2; if(smear>1){const[sh,sc]=buffer('shake',rw,rh);sc.drawImage(cv,0,0);c.globalAlpha=.35;c.drawImage(sh,Math.min(18,smear),Math.min(9,smear*.3));c.globalAlpha=1;}}
  // Fixed sRGB display model with physically directed exposure and photon-noise proxy.
  const data=c.getImageData(0,0,rw,rh),a=data.data,gain=2**clamp(m.offset,-12,10),balance=Math.log(s.wb/s.temperature);
  const gains=[Math.exp(balance*.65),1,Math.exp(-balance*.65)];
  for(let i=0;i<a.length;i+=4){
-  let rnd=((i*1664525+1013904223)>>>0)/4294967296; // Deterministic texture keeps A/B stable.
-  const rnd2=(((i+73)*22695477+1)>>>0)/4294967296;
-  const n=(rnd+rnd2-1)*m.noise;
+  const n=grainSample(i>>>2)*m.noise;
   for(let j=0;j<3;j++){let v=(a[i+j]/255)**2.2;v=(v+n*Math.sqrt(Math.max(v,.001))*.55)*gain*gains[j];a[i+j]=Math.round(255*clamp(v,0,1)**(1/2.2));}
  }
  c.putImageData(data,0,0);
@@ -142,13 +146,11 @@ export function drawPhoto(canvas,state,t=0,opts={}){
 }
 function base(canvas){const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;c.clearRect(0,0,W,H);c.fillStyle='#f5f6ed';c.fillRect(0,0,W,H);for(let x=20;x<W;x+=25)for(let y=20;y<H;y+=25)circle(c,x,y,.65,'#dbe1d2');return {c,W,H};}
 export function drawSensors(canvas,state){
- const {c,W,H}=base(canvas),m=metrics(state),scale=Math.min(W/115,H/67),cx=W*.37,cy=H*.53;
- label(c,'SENSORFLÄCHE · RELATIVE GRÖSSEN',30,55,12,C.muted);
- const order=['medium','full','apsc','mft','inch','phone'];const colors=['#d5ddc6','#b6cbb3','#91b59e','#729f89','#4e8877','#266b5b'];
- order.forEach((key,i)=>{const s=sensors[key],x=cx-s.w*scale/2,y=cy-s.h*scale/2;c.fillStyle=colors[i];c.fillRect(x,y,s.w*scale,s.h*scale);c.strokeStyle=key===state.sensor?'#bf8b35':'#fff9';c.lineWidth=key===state.sensor?3:1;c.strokeRect(x,y,s.w*scale,s.h*scale);label(c,s.name,x+5,y+13,9,i>3?'#edf4df':'#294b3d');});
- const tx=W*.7;label(c,m.sensor.name,tx,H*.25,24,C.ink);
- const lines=[`${m.sensor.w} × ${m.sensor.h} mm`,`${(m.sensor.w*m.sensor.h).toFixed(0)} mm² Sensorfläche`,`Crop-Faktor: ${m.crop.toFixed(2)}×`,`Reale Brennweite: ${m.s.focal.toFixed(1)} mm`,`KB-äquivalent (diagonal): ${m.equivalent.toFixed(0)} mm`,`Pixelabstand: ${(m.pixel*1000).toFixed(2)} µm bei ${m.s.mp} MP`];
- lines.forEach((t,i)=>label(c,t,tx,H*.33+i*27,12,i>2?C.teal:C.muted));
- label(c,'Die Gehäusegröße ist nicht die Sensorgröße.',30,H-62,12,C.ink);
- label(c,'Gleiche Blendenzahl + gleiche Zeit: ähnliche Belichtung pro Fläche; größere Fläche sammelt insgesamt mehr Licht.',30,H-36,10,C.muted);
+ const {c,W,H}=base(canvas),m=metrics(state),scale=Math.min(W/130,H/63),cx=W*.28,cy=H*.48;
+ const order=['medium','full','apsc','mft','inch','phone'],colors=['#d5ddc6','#b6cbb3','#91b59e','#729f89','#4e8877','#266b5b'];
+ label(c,'RELATIVE SENSORFLÄCHEN',W*.05,H*.09,18,C.muted);
+ order.forEach((id,i)=>{const s=sensors[id],x=cx-s.w*scale/2,y=cy-s.h*scale/2;c.fillStyle=colors[i];c.fillRect(x,y,s.w*scale,s.h*scale);c.strokeStyle=id===state.sensor?'#bf8b35':'#fff9';c.lineWidth=id===state.sensor?3:1;c.strokeRect(x,y,s.w*scale,s.h*scale);});
+ order.forEach((id,i)=>{const s=sensors[id],yy=H*.20+i*H*.095;c.fillStyle=colors[i];c.fillRect(W*.54,yy-13,18,18);label(c,s.name,W*.575,yy,20,id===state.sensor?C.teal:C.ink);label(c,`${s.w} × ${s.h} mm`,W*.94,yy,18,C.muted,'right');});
+ label(c,`${m.sensor.name} · ${m.s.mp} MP`,W*.05,H*.83,24,C.teal);label(c,`Pixelabstand ${(m.pixel*1000).toFixed(2)} µm · Crop ${m.crop.toFixed(2)}×`,W*.05,H*.89,19,C.muted);
+ label(c,'Größen sind maßstäblich; Beschriftungen stehen außerhalb der Flächen.',W*.05,H*.96,16,C.muted);
 }

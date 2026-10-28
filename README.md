@@ -20,7 +20,7 @@ node --check dist/app.mjs
 node --check dist/renderer.mjs
 ```
 
-Die fachlichen Tests prüfen Bildwinkel, Dünnlinsen-Bildweite, DOF-Grenzen gegen den Unschärfekreis, Hyperfokaldistanz, ISO/Photonen-Trennung, EV, ND, Automatiken, Formatwechsel und Schärfemaßstäbe. Zusätzlich werden 120 Kombinationen aus Format, Brennweite und Blende geprüft.
+Die 30 fachlichen Tests prüfen zusätzlich Gelenkverbindung, unabhängige Körnung, Automatikgrenzen, Autofokus und A/B-Änderungen. Die grundlegenden Prüfungen umfassen Bildwinkel, Dünnlinsen-Bildweite, DOF-Grenzen gegen den Unschärfekreis, Hyperfokaldistanz, ISO/Photonen-Trennung, EV, ND, Automatiken, Formatwechsel und Schärfemaßstäbe. Zusätzlich werden 120 Kombinationen aus Format, Brennweite und Blende geprüft.
 
 ## GitHub Pages
 
@@ -28,18 +28,18 @@ Im portablen Übergabepaket liegen die Webdateien bereits im Wurzelverzeichnis. 
 
 Für das originale Sites-Projekt zeigt `.openai/hosting.json` auf `dist`. Diese Identitätsdatei gehört ausschließlich zu diesem konkreten Sites-Projekt und wird deshalb nicht in das plattformneutrale Übergabepaket kopiert.
 
-## Beamer-Arbeitsfläche (V2)
+## Beamer-Arbeitsfläche (V3)
 
-Die Hauptansicht füllt das Fenster dauerhaft. Kameraquerschnitt, Raum und Aufnahme sind gleichzeitig sichtbar. Die Oberfläche ist für Desktop und 16:9-Projektion ausgelegt und bei 1280 × 720 sowie 1920 × 1080 auf Überlauf geprüft. Zusatzeinstellungen, Experimente und Quellen öffnen in Fenstern. `camera-view.mjs` enthält das neue Zwei-Gruppen-Kameraschema und den Raumplan. Gehen, Hand, Ball und Vogel haben getrennte Bewegungsparameter.
+Die Hauptansicht füllt das Fenster dauerhaft. Kameraquerschnitt, Raum und Aufnahme sind gleichzeitig sichtbar. Die Oberfläche ist für Desktop und 16:9-Projektion ausgelegt und bei 1280 × 720 sowie 1920 × 1080 auf Überlauf geprüft. Bild- und Sensorregler liegen in einer zweiten Registerkarte links; das Aufnahmebild bleibt sichtbar. Experimente und Quellen öffnen in per Außenklick schließbaren Fenstern. `camera-view.mjs` enthält das neue Zwei-Gruppen-Kameraschema und den Raumplan. Gehen, Hand, Ball und Vogel haben getrennte Bewegungsparameter.
 
 ## Umfang
 
 - Sechs generische Sensorprofile, frei kombinierbare Lehr-Optik und zwei Bauarten.
-- Manuell, Zeitautomatik A/Av und Blendenautomatik S/Tv; feste Blende im Smartphone-Profil.
+- Manuell, Zeitautomatik A/Av, Blendenautomatik S/Tv, Programmbelichtung P, Auto-ISO, nachgeführter Autofokus und Auto-Weißabgleich; feste Blende im Smartphone-Profil.
 - Aufnahmebild, idealisierter Querschnitt/Strahlengang, Raumplan und Sensorflächen.
 - Verstellbare Szene, Lichtmenge, Fokus, Bewegung, Weißabgleich und ND.
-- A/B im Arbeitsspeicher, Konfigurationslink im URL-Fragment, PNG-Export.
-- Acht geführte Experimente, Format-Atlas, Parameterkarte und Quellen.
+- A/B mit markierten Parameterunterschieden im Arbeitsspeicher, Konfigurationslink im URL-Fragment, PNG-Export.
+- Acht geführte Experimente, kompakter Format-Atlas und Quellen.
 
 ## Grenzen
 
@@ -53,4 +53,10 @@ Die eingeblendeten EV-Werte beziehen sich auf eine gesetzte didaktische Szenenre
 
 Keine Besucherinformationen oder Bilder werden vom Anwendungscode versendet. Die Anwendung nutzt keine Analyse-Tracker. Der jeweilige Hostinganbieter kann eigene technische Zugriffsprotokolle führen. Teilen eines Versuchs enthält nur die Parameter im URL-Fragment. A/B-Daten und Lernversuche werden beim Neuladen nicht dauerhaft gespeichert.
 
-Recherche, Hostingbewertung und Ausbauplan stehen in den beigefügten Dokumenten und unter „Konzept & Quellen“ in der Anwendung. Die Umsetzung enthält keine übernommenen fremden Simulatoren oder Fotos.
+Die Anwendung erklärt Näherungen unter „Modell & Quellen“. Die Umsetzung enthält keine übernommenen fremden Simulatoren oder Fotos.
+
+## V3-Bedienung
+
+Positionen ausschließlich unter „Raum & Fokus“ ziehen oder numerisch eingeben, einschließlich Kamera, Ball, Vogel und Skulptur. Die Szene enthält nur Licht und Bewegung. Einzelne Auto-Schalter geben den jeweiligen Parameter frei bzw. führen ihn nach; „Auto einrichten“ aktiviert P, Personen-AF und Auto-WB. Bei Automatikgrenzen bleibt die Abweichung sichtbar. „Abspielen“ steuert nur den Zeitablauf der Vorschau. Eine pausierte Aufnahme zeigt weiterhin die zum gewählten Verschluss passende Bewegungsspur.
+
+Der Querschnitt zeigt bis zu drei Motivpunkte und darunter vergrößerte Unschärfekreise. Das Schema ist keine Schnittzeichnung eines konkreten Objektivs. Physische Größen und dargestellte Pixelradien sind ausdrücklich verschieden; die Vergrößerung hält kleine Effekte lesbar.
