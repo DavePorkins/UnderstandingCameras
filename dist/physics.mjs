@@ -9,19 +9,27 @@ export const sensors = {
 };
 export const apertures=[1.4,2,2.8,4,5.6,8,11,16,22];
 export const shutters=[8000,6400,5000,4000,3200,2500,2000,1600,1250,1000,800,640,500,400,320,250,200,160,125,100,80,60,50,40,30,25,20,15,13,10,8,6,5,4,3,2.5,2,1.6,1.3,1].map(n=>1/n).concat([1.3,1.6,2]);
-export const focalStops=[2,2.8,4,6.8,8.8,12,14,18,20,24,28,35,50,70,85,105,135,200];
+export const focalStops=[2,2.8,4,6.8,8.8,12,14,18,20,24,28,33,35,50,70,85,105,135,200];
 export const isos=[100,200,400,800,1600,3200,6400,12800];
-export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:4,time:1/125,iso:100,mode:'M',autoISO:false,autoFocus:false,autoWB:false,afTarget:'person',rayTargets:'person',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,plantX:-1.2,ballX:.95,birdX:-.9,sculptureX:2,sculpture:9,speed:0,waveSpeed:3,ballSpeed:4,birdSpeed:7,ballDistance:6,birdDistance:8,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:false,scene:'courtyard',lampOn:false,windowsOn:false,lampX:-1.5,lampZ:3,lampEV:14};
+export const defaults={sensor:'full',body:'mirrorless',focal:50,aperture:4,time:1/125,iso:100,mode:'M',autoISO:false,autoFocus:false,autoWB:false,afTarget:'person',rayTargets:'person',ev:11,comp:0,nd:0,focus:5,subject:5,background:12,foreground:2.8,cameraBack:0,cameraX:0,subjectX:0,plantX:-1.2,ballX:.95,birdX:-.9,sculptureX:2,sculpture:9,speed:0,waveSpeed:3,ballSpeed:4,birdSpeed:7,ballDistance:6,birdDistance:8,wb:5500,temperature:5500,tripod:true,stabilization:true,grid:true,zebra:false,peaking:false,motion:false,portrait:false,mp:24,cocMode:'standard',matchFrame:false,scene:'courtyard',lampOn:false,windowsOn:false,lampX:-1.5,lampZ:3,lampEV:14,lampType:'street',lampAngle:0};
 export const actors={camera:{name:'Kamera',z:'cameraBack',x:'cameraX',min:-40,max:40},person:{name:'Person',z:'subject',x:'subjectX',min:-40,max:80},plant:{name:'Pflanze',z:'foreground',x:'plantX',min:-40,max:80},ball:{name:'Ball',z:'ballDistance',x:'ballX',min:-40,max:80},bird:{name:'Vogel',z:'birdDistance',x:'birdX',min:-40,max:80},sculpture:{name:'Skulptur',z:'sculpture',x:'sculptureX',min:-40,max:80},background:{name:'Hintergrund',z:'background',min:-40,max:80},lamp:{name:'Lampe',z:'lampZ',x:'lampX',min:-40,max:80}};
 export function actorDistance(s,id){const a=actors[id]||actors.person;return id==='camera'?s.cameraBack:s[a.z]+s.cameraBack;}
 export function moveActor(s,id,z,x){const a=actors[id];if(!a)return s;const next={...s,[a.z]:clamp(id==='camera'?-z:z,a.min,a.max)};if(a.x&&Number.isFinite(x))next[a.x]=clamp(x,-15,15);return next;}
-export function incidentMultiplier(s,x,z,height=1){if(!s.lampOn)return 1;const dx=x-s.lampX,dz=z-s.lampZ,dy=height-2.8,d2=dx*dx+dz*dz+dy*dy;const cosine=(-.68*dy+.733*dz)/Math.sqrt(Math.max(d2,.01)),cone=clamp((cosine-.45)/.35,0,1)**2;return 1+2**(s.lampEV-s.ev)*cone/Math.max(d2,.25);}
+export function incidentMultiplier(s,x,z,height=1){
+ if(!s.lampOn)return 1;
+ const dx=x-s.lampX,dz=z-s.lampZ,dy=height-2.8,d2=dx*dx+dz*dz+dy*dy,dist=Math.sqrt(Math.max(d2,.01));
+ const angle=(s.lampAngle||0)*Math.PI/180;
+ const pattern=s.lampType==='spot'?clamp(((-.68*dy+.733*(Math.sin(angle)*dx+Math.cos(angle)*dz))/dist-.45)/.35,0,1)**2:clamp(-dy/dist,0,1);
+ return 1+2**(s.lampEV-s.ev)*pattern/Math.max(d2,.25);
+}
+export function windowEmissionMultiplier(s){return s.windowsOn?1+2**(8-s.ev):1;}
+export function projectPoint(s,x,y,z,width,height){const d=Math.max(z+s.cameraBack,.15),k=width*s.focal/sensors[s.sensor].w;return [width/2+(x-s.cameraX)*k/d,height*.49+(1.15-y)*k/d,k/d];}
 export function meteredEV(s){const a=actors[s.afTarget]||actors.person;return s.ev+Math.log2(incidentMultiplier(s,a.x?s[a.x]:0,s[a.z],s.afTarget==='person'?.9:.6));}
 export function atlasState(id,framing=true){const sensor=sensors[id];return {...defaults,sensor:id,mp:sensor.mp,focal:framing?35*sensor.w/36:35,mode:'A',aperture:4,autoFocus:true,matchFrame:framing,motion:false,waveSpeed:0};}
 export const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 export const nearest=(a,n)=>a.reduce((x,y)=>Math.abs(Math.log(y/n))<Math.abs(Math.log(x/n))?y:x);
 export function crop(s){return Math.hypot(36,24)/Math.hypot(s.w,s.h);}
-export function shutterText(t){return t>=1?`${Number(t.toFixed(1))} s`:`1/${Math.round(1/t)} s`;}
+export function shutterText(t){return t>=.3?`${Number(t.toFixed(t>=1?1:2))} s`:`1/${Math.round(1/t)} s`;}
 export function distanceText(m){return !Number.isFinite(m)||m>999?'∞':`${m.toFixed(m<10?2:1)} m`;}
 export function effective(s){
  const out={...s};
@@ -95,16 +103,17 @@ export function cameraModel(input,{distance,pointHeight=.6}={}){
 export function encodeState(s){return encodeURIComponent(JSON.stringify(Object.fromEntries(Object.entries(s).filter(([key,value])=>defaults[key]!==value))));}
 export function decodeState(hash){
  try {const raw=JSON.parse(decodeURIComponent(hash.replace(/^#(?:s=)?/,''))),out={...defaults};
-  for(const [k,v]of Object.entries(raw)){if(!(k in defaults)||typeof v!==typeof defaults[k])continue;if(typeof v==='number'&&!Number.isFinite(v))continue;out[k]=v;}
+  for(const [k,v]of Object.entries(raw)){if(!Object.hasOwn(defaults,k)||typeof v!==typeof defaults[k])continue;if(typeof v==='number'&&!Number.isFinite(v))continue;out[k]=v;}
   if(!Object.hasOwn(sensors,out.sensor))out.sensor='full';
   const limits={focal:[2,200],aperture:[1.4,22],time:[1/8000,2],iso:[100,12800],ev:[3,16],comp:[-3,3],nd:[0,10],focus:[0.3,150],subject:[1.5,15],background:[6,40],foreground:[1,8],cameraBack:[0,8],cameraX:[-3,3],subjectX:[-3,3],plantX:[-3,3],ballX:[-3,3],birdX:[-3,3],sculptureX:[-3,3],sculpture:[2,25],speed:[0,12],waveSpeed:[0,12],ballSpeed:[0,12],birdSpeed:[0,12],ballDistance:[2,18],birdDistance:[2,25],wb:[2500,10000],temperature:[2500,10000],mp:[8,100]};
-  for(const a of Object.values(actors)){limits[a.z]=[a.min,a.max];if(a.x)limits[a.x]=[-15,15];}limits.lampEV=[8,18];
+  for(const a of Object.values(actors)){limits[a.z]=[a.min,a.max];if(a.x)limits[a.x]=[-15,15];}limits.lampEV=[8,18];limits.lampAngle=[-180,180];
   for(const[k,[a,b]]of Object.entries(limits))out[k]=clamp(out[k],a,b);
   if(!['M','A','S','P'].includes(out.mode))out.mode='M';
   if(!Object.hasOwn(actors,out.afTarget)||['camera','lamp'].includes(out.afTarget))out.afTarget='person';
   out.rayTargets=out.rayTargets.split(',').filter(x=>['person','plant','background'].includes(x)).slice(0,3).join(',')||'person';
   if(!['standard','pixel'].includes(out.cocMode))out.cocMode='standard';
   if(!['courtyard','night','studio'].includes(out.scene))out.scene='courtyard';
+  if(!['street','spot'].includes(out.lampType))out.lampType='street';
   if(!['mirrorless','dslr'].includes(out.body))out.body='mirrorless';
   return out;
  }catch{return {...defaults};}
