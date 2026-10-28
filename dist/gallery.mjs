@@ -1,0 +1,4 @@
+import {decodeState,encodeState} from './physics.mjs';
+export const galleryKey='fotolabor.photos.v1';
+export function readGallery(storage){try{const list=JSON.parse(storage.getItem(galleryKey)||'[]');if(!Array.isArray(list))return [];return list.filter(p=>p&&typeof p.id==='string'&&/^[a-z0-9-]+$/.test(p.id)&&typeof p.image==='string'&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.image)&&p.image.length<800000&&Number.isFinite(p.time)&&Number.isFinite(p.created)).slice(-20).map(p=>({...p,state:decodeState('#s='+encodeState(p.state||{}))}));}catch{return [];}}
+export function writeGallery(storage,photos){if(photos.length>20)throw new Error('Die Galerie enthält 20 Fotos. Exportieren oder löschen Sie eine Aufnahme, bevor Sie weitere speichern.');storage.setItem(galleryKey,JSON.stringify(photos));}

@@ -1,62 +1,39 @@
-# Fotolabor · Licht verstehen
+# Fotolabor · Licht verstehen (V4)
 
-Ein eigenständiges, browserbasiertes Lehrlabor für digitale Fotografie. Deutsche Oberfläche, keine Laufzeit-Abhängigkeiten, keine KI-/API-Aufrufe, keine externen Bildassets oder Schriftdateien.
+Browserbasiertes Lehrlabor für digitale Fotografie. Deutsche Oberfläche; statisches Hosting; keine Analyse-Tracker und keine Kamera- oder Mikrofonberechtigung. QR-Codes werden lokal mit qrcode-generator (MIT, Lizenz unter `dist/vendor/`) erzeugt.
 
 ## Starten
 
-Den Inhalt von `dist/` mit einem beliebigen statischen Webserver ausliefern. Beispielsweise im Projektordner:
+`python -m http.server 8000 --directory dist` im Projektordner ausführen, anschließend http://localhost:8000 öffnen. Die Modulversion benötigt HTTP. Die zusätzliche eigenständige `Fotolabor.html` enthält Styles, Skripte und QR-Bibliothek in einer Datei.
 
-```sh
-python -m http.server 8000 --directory dist
-```
+## Bedienung
 
-Danach `http://localhost:8000` öffnen. Die Modulversion braucht HTTP; für direktes Öffnen liegt im Übergabepaket zusätzlich eine eigenständige `Fotolabor.html` mit eingebetteten Skripten und Styles.
+- Die komplette Arbeitsfläche passt sich dem verfügbaren Desktop-Browserfenster an. „Vollbild“ fordert Browser-Vollbild an; Esc beendet es. Falls der Browser die Anfrage abweist, nennt die Oberfläche das Browsermenü als Alternative.
+- Kamera und Gegenstände im Raumplan ziehen. Doppelklick oder der Knopf in der Raumüberschrift fokussiert das gewählte Objekt. Eine freie Stelle setzt manuellen Fokus. Gegenstände hinter der Kamera werden im Foto nicht dargestellt. Die gemeinsamen Weltgrenzen sind −40 bis 80 m; die Kamera kann zwischen −40 und 40 m stehen.
+- „Automatik ein“ aktiviert P, AF auf das gewählte Motiv und Auto-WB. „Automatik aus“ übernimmt die aktuellen Ergebnisse in M und beendet Auto-ISO, AF und Auto-WB. Einzelne Auto-Schalter sind weiterhin getrennt nutzbar.
+- Die Ausschnittssperre beim Formatwechsel ist standardmäßig aus. Ein Smartphone hat eine feste effektive Blende, ohne den gespeicherten Blendenwert für Wechselobjektive zu überschreiben.
+- Der Atlas zeigt Sensorflächen sowie berechnete Vergleichsbilder. Wählbar: gleicher horizontaler Bildwinkel oder gleiche reale Brennweite. Die Zeitautomatik gleicht die Belichtung an. Smartphone ƒ/1.8, übrige Profile ƒ/4.
+- „Foto“ speichert Aufnahme und vollständige Konfiguration lokal. Die Galerie kann Einstellungen wiederherstellen, zwei Aufnahmen mit Wertedifferenzen vergleichen und PNGs exportieren. Sie fasst 20 Fotos. Browserspeicher und Website-Ursprung bestimmen die Aufbewahrung; beim Löschen von Websitedaten gehen diese Aufnahmen verloren. Reset löscht keine Galerie.
+- „Teilen“ zeigt Link und QR-Code; optional mit aktuellen Einstellungen. Das ändert keine Zugriffsfreigabe der Website.
+- Acht Aufgaben besitzen Ausgangsbilder, überprüfbare Ziele, Hinweise und Lösungseinstellungen. Sie starten direkt im Labor, ohne zweites Dialogfenster.
+- Lampe und Fensterlicht lassen sich getrennt aktivieren. Die Lampe kann im Raum verschoben werden; die Stärke ist EV₁₀₀ in 1 m Abstand. Die Automatik misst am ausgewählten Motiv. Die EV-Statistik der Aufnahme bezieht sich weiterhin auf die Umgebungsreferenz.
 
-## Prüfen
+## Prüfung
 
-```sh
-node verify.mjs
-node --check dist/app.mjs
-node --check dist/renderer.mjs
-```
+`node verify.mjs` prüft Optik, Belichtung, Schärfentiefe, Formatwechsel, Automatiken, Lichtquellen, Aufgabenlösungen, Galerie-Speicherung und QR-Erzeugung. Zusätzlich werden 120 Kombinationen aus Sensor, Brennweite und Blende geprüft. JavaScript-Module können mit `node --check dist/app.mjs` usw. auf Syntax geprüft werden.
 
-Die 30 fachlichen Tests prüfen zusätzlich Gelenkverbindung, unabhängige Körnung, Automatikgrenzen, Autofokus und A/B-Änderungen. Die grundlegenden Prüfungen umfassen Bildwinkel, Dünnlinsen-Bildweite, DOF-Grenzen gegen den Unschärfekreis, Hyperfokaldistanz, ISO/Photonen-Trennung, EV, ND, Automatiken, Formatwechsel und Schärfemaßstäbe. Zusätzlich werden 120 Kombinationen aus Format, Brennweite und Blende geprüft.
+## Modellgrenzen
 
-## GitHub Pages
+Idealisiertes Zwei-Gruppen-Kameraschema, keine Konstruktion eines konkreten Objektivs. Das seitliche Fokusdetail vergrößert die Längsabstände; die vergrößerten Kreisgrößen sind ebenfalls separat skaliert. Geometrische Schärfentiefe und Unschärfekreise verwenden die Dünnlinsen-Näherung. Außerhalb des Schärfekriteriums nimmt die Unschärfe stetig zu, nicht sprunghaft.
 
-Im portablen Übergabepaket liegen die Webdateien bereits im Wurzelverzeichnis. Diese Dateien in ein neues öffentliches Repository hochladen. Unter **Settings → Pages → Deploy from a branch** den verwendeten Branch und **/(root)** wählen. Es ist kein Build und kein eigener Server erforderlich. `.nojekyll` sorgt für unveränderte statische Auslieferung. Die relativen Assetpfade funktionieren auch unter `username.github.io/repository/`.
+Die 2,5D-Szene verwendet Objektlagen. Lampenlicht wird je Objekt und auf einer Bodenebene angenähert; keine berechneten Schatten, Reflexionen oder spektrales Mischlicht. Die Lichtstärke folgt mit begrenztem Nahbereich dem Abstandsgesetz und einer weichen Richtkeule. Auflösung beeinflusst Pixelabstand und Schärfekriterium, nicht die Pixelzahl des Vorschau-Canvas. Rauschen, Weißabgleich, Stabilisierung, Porträteffekt und Bewegungsintegration sind didaktische Näherungen. Die Vorschau zielt auf 30 Bilder/s mit begrenzter Renderauflösung; tatsächliche Geschwindigkeit hängt vom Gerät ab.
 
-Für das originale Sites-Projekt zeigt `.openai/hosting.json` auf `dist`. Diese Identitätsdatei gehört ausschließlich zu diesem konkreten Sites-Projekt und wird deshalb nicht in das plattformneutrale Übergabepaket kopiert.
+## Hosting und Daten
 
-## Beamer-Arbeitsfläche (V3)
+`dist/` kann auf einem statischen Hoster veröffentlicht werden. Das portable Quellcodepaket legt diese Dateien direkt im Wurzelverzeichnis ab; für GitHub Pages dort `/(root)` wählen. `.nojekyll` ist beigefügt. `.openai/hosting.json` gehört nur zum bestehenden Sites-Projekt und ist nicht im portablen Paket.
 
-Die Hauptansicht füllt das Fenster dauerhaft. Kameraquerschnitt, Raum und Aufnahme sind gleichzeitig sichtbar. Die Oberfläche ist für Desktop und 16:9-Projektion ausgelegt und bei 1280 × 720 sowie 1920 × 1080 auf Überlauf geprüft. Bild- und Sensorregler liegen in einer zweiten Registerkarte links; das Aufnahmebild bleibt sichtbar. Experimente und Quellen öffnen in per Außenklick schließbaren Fenstern. `camera-view.mjs` enthält das neue Zwei-Gruppen-Kameraschema und den Raumplan. Gehen, Hand, Ball und Vogel haben getrennte Bewegungsparameter.
+Die Anwendung lädt keine externen Schriften, Fotos oder QR-Dienste nach. Galerieaufnahmen bleiben im Browserspeicher. Die Sites-Zugriffsfreigabe bleibt separat erhalten. Quellen und die MIT-Lizenz sind beigefügt.
 
-## Umfang
+## Vorgemerkt
 
-- Sechs generische Sensorprofile, frei kombinierbare Lehr-Optik und zwei Bauarten.
-- Manuell, Zeitautomatik A/Av, Blendenautomatik S/Tv, Programmbelichtung P, Auto-ISO, nachgeführter Autofokus und Auto-Weißabgleich; feste Blende im Smartphone-Profil.
-- Aufnahmebild, idealisierter Querschnitt/Strahlengang, Raumplan und Sensorflächen.
-- Verstellbare Szene, Lichtmenge, Fokus, Bewegung, Weißabgleich und ND.
-- A/B mit markierten Parameterunterschieden im Arbeitsspeicher, Konfigurationslink im URL-Fragment, PNG-Export.
-- Acht geführte Experimente, kompakter Format-Atlas und Quellen.
-
-## Grenzen
-
-Die Szene nutzt 2,5D-Projektion und Unschärfe pro Objektlage. Keine optische Messsimulation, kein vollständiges Bokeh-/PSF-Modell, keine kalibrierten Gerätesensoren, kein Readout, keine reale RAW/HDR-Pipeline. Rauschen, Farbe und Stabilisierung sind didaktische Näherungen. Die genannten Kamerafamilien illustrieren Formate, keine tatsächlichen Gerätespezifikationen. Kamera- und Objektivparameter sind frei idealisiert; Bajonettkompatibilität wird nicht geprüft.
-
-Die geometrische Schärfentiefe verwendet ein explizites Unschärfekriterium. Eine Änderung dieses Kriteriums verändert nicht das gerenderte optische Bild. Der Porträteffekt verändert das Bild, aber nicht die optischen DOF-Werte. ISO allein verändert bei konstanter Blende, Zeit und Beleuchtung nicht den Lichtmengenwert.
-
-Die eingeblendeten EV-Werte beziehen sich auf eine gesetzte didaktische Szenenreferenz. Der relative Lichtwert pro Sensorfläche ist keine Messung in Lux, Photonen oder Elektronen. Bei der Rauschnäherung wird zusätzlich die gesamte Sensorfläche berücksichtigt; die Auflösung dient hier der Pixelabstands- und DOF-Betrachtung und ändert nicht die Renderauflösung.
-
-## Daten und Zugriff
-
-Keine Besucherinformationen oder Bilder werden vom Anwendungscode versendet. Die Anwendung nutzt keine Analyse-Tracker. Der jeweilige Hostinganbieter kann eigene technische Zugriffsprotokolle führen. Teilen eines Versuchs enthält nur die Parameter im URL-Fragment. A/B-Daten und Lernversuche werden beim Neuladen nicht dauerhaft gespeichert.
-
-Die Anwendung erklärt Näherungen unter „Modell & Quellen“. Die Umsetzung enthält keine übernommenen fremden Simulatoren oder Fotos.
-
-## V3-Bedienung
-
-Positionen ausschließlich unter „Raum & Fokus“ ziehen oder numerisch eingeben, einschließlich Kamera, Ball, Vogel und Skulptur. Die Szene enthält nur Licht und Bewegung. Einzelne Auto-Schalter geben den jeweiligen Parameter frei bzw. führen ihn nach; „Auto einrichten“ aktiviert P, Personen-AF und Auto-WB. Bei Automatikgrenzen bleibt die Abweichung sichtbar. „Abspielen“ steuert nur den Zeitablauf der Vorschau. Eine pausierte Aufnahme zeigt weiterhin die zum gewählten Verschluss passende Bewegungsspur.
-
-Der Querschnitt zeigt bis zu drei Motivpunkte und darunter vergrößerte Unschärfekreise. Das Schema ist keine Schnittzeichnung eines konkreten Objektivs. Physische Größen und dargestellte Pixelradien sind ausdrücklich verschieden; die Vergrößerung hält kleine Effekte lesbar.
+Deutsch/Englisch-Umschaltung nach inhaltlicher Freigabe der deutschen Fassung; derzeit bewusst keine teilweise übersetzte Oberfläche.
