@@ -9,6 +9,7 @@ Browserbasiertes Lehrlabor für digitale Fotografie mit deutscher und englischer
 ## Bedienung
 
 - Die Arbeitsfläche passt sich dem verfügbaren Desktopfenster an. Vollbild nutzt die Browserfunktion; Esc beendet sie. Kleine Fenster skalieren die Fläche, wodurch Schrift kleiner wird. Für den Beamer ist ein großes Fenster empfohlen.
+- Dunkel oben neben der Sprache schaltet das Farbschema um. Die Auswahl bleibt lokal gespeichert; beim ersten Besuch gilt die Systemeinstellung. Diagramme und Dialoge wechseln mit, die simulierte Aufnahme behält ihre Belichtung.
 - Deutsch/English oben wählen. `?lang=en` öffnet direkt Englisch; geteilte Links übernehmen die Sprache.
 - Kamera und Objekte im Raumplan ziehen. Nach unten im Plan bedeutet nach rechts im Foto. Doppelklick im Plan oder Klick auf ein sichtbares Objekt im Foto fokussiert. Die Kamera verändert ihren Standort, während Weltpositionen der Objekte bestehen bleiben.
 - Komponenten im Kameraschnitt wählen: Der passende Regler wird markiert. Sensorgröße folgt dem Format und bleibt beim Zoomen unverändert. Mehrere Motivpunkte zeigen, wie unscharfe Entfernungen Kreise auf dem Sensor erzeugen.

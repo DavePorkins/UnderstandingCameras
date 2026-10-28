@@ -376,5 +376,8 @@ export const translations={
  "RELATIVE SENSORFLÄCHEN": "RELATIVE SENSOR AREAS",
  "Größen sind maßstäblich; Beschriftungen stehen außerhalb der Flächen.": "Sensor sizes are to scale; labels are placed outside their areas.",
  "Pixelabstand": "Pixel pitch",
- "Kameratechnik für den Unterricht": "Camera technology for teaching"
+ "Kameratechnik für den Unterricht": "Camera technology for teaching",
+ "Dunkelmodus": "Dark mode",
+ "Dunkelmodus umschalten": "Toggle dark mode",
+ "Dunkel": "Dark"
 };

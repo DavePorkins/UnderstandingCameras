@@ -1,11 +1,14 @@
 import {metrics,cameraModel,clamp,distanceText,shutterText,actors,actorDistance} from './physics.mjs';
 import {tr} from './i18n.mjs';
-const colors={ink:'#274b40',muted:'#7b8e7e',teal:'#2a8b78',amber:'#bd8b37',coral:'#bf7055',line:'#cbd8c3'};
-function stroke(c,points,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.stroke();c.setLineDash([]);}
-function textAt(c,t,x,y,size,color=colors.ink,align='center'){c.fillStyle=color;c.font=`${size}px system-ui,sans-serif`;c.textAlign=align;c.fillText(tr(t),x,y);}
-function dot(c,x,y,r,color){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=color;c.fill();}
-function rect(c,x,y,w,h,color,r=0){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=color;c.fill();}
-function setup(canvas){const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=W/900;c.clearRect(0,0,W,H);c.fillStyle='#f4f6eb';c.fillRect(0,0,W,H);return {c,W,H,k};}
+const lightColors={ink:'#274b40',muted:'#7b8e7e',teal:'#2a8b78',amber:'#bd8b37',coral:'#bf7055',line:'#cbd8c3'},darkColors={ink:'#dce9e1',muted:'#a9bcb0',teal:'#72d0b8',amber:'#e7bc70',coral:'#e99e83',line:'#52655c'},colors={...lightColors};
+let diagramDark=false;
+const darkDiagramColors={'#f4f6eb':'#192821','#c06d55':'#efa68c','#739363':'#a9cd91','#6d8fa6':'#9bbfd9','#cbd8c3':'#52655c','#b8c7ae':'#52655c','#b59b62':'#cfb77e','#8c9a83':'#b5c3a8','#bc9d51':'#e3c77e','#e7eedf':'#263d32','#35594a':'#668c78','#e8efcf':'#d8e8bd','#d0e6d1':'#426851','#eeddbb':'#92743b','#d6c695':'#a18f58','#aab99d':'#6b8171'};
+function diagramColor(value){return diagramDark?(darkDiagramColors[value.slice(0,7)]||value.slice(0,7))+value.slice(7):value;}
+function stroke(c,points,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=diagramColor(color);c.lineWidth=width;c.stroke();c.setLineDash([]);}
+function textAt(c,t,x,y,size,color=colors.ink,align='center'){c.fillStyle=diagramColor(color);c.font=`${size}px system-ui,sans-serif`;c.textAlign=align;c.fillText(tr(t),x,y);}
+function dot(c,x,y,r,color){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=diagramColor(color);c.fill();}
+function rect(c,x,y,w,h,color,r=0){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=diagramColor(color);c.fill();}
+function setup(canvas){diagramDark=typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';Object.assign(colors,diagramDark?darkColors:lightColors);const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=W/900;c.clearRect(0,0,W,H);c.fillStyle=diagramColor('#f4f6eb');c.fillRect(0,0,W,H);return {c,W,H,k};}
 export const raySubjects={person:{name:'Person',color:'#c06d55',height:.6},plant:{name:'Pflanze',color:'#739363',height:-.1},background:{name:'Hintergrund',color:'#6d8fa6',height:1.25}};
 export function cutawayGeometry(W,H,state){
  const m=metrics(state),s=m.s,k=W/900,cy=H*.35,half=Math.min(H*.19,W*.14);

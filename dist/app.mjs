@@ -153,5 +153,8 @@ cameraCanvas.addEventListener('pointermove',e=>{const p=point(cameraCanvas,e),hi
 cameraCanvas.addEventListener('pointerleave',()=>{hoveredControl=null;needsRender=true;});
 function render(t,onlyPhoto=false){const signature=JSON.stringify(state)+'|'+t+'|'+canvas.width+'x'+canvas.height+'|'+getLanguage();if(signature!==photoSignature){photoHit=drawPhoto(canvas,state,t);photoSignature=signature;}if(!onlyPhoto){cameraHit=drawCutaway(cameraCanvas,state,{active:activeControl,hovered:hoveredControl});spaceHit=drawRoom(spaceCanvas,state,{selected:roomSelected,bounds:drag?.bounds});}}
 function animate(now){const dt=Math.min((now-lastTick)/1000,.1);lastTick=now;const moving=state.motion&&!document.hidden;if(moving)simTime+=dt;if(needsRender||(moving&&now-lastTime>30)){render(simTime,!needsRender);needsRender=false;lastTime=now;}requestAnimationFrame(animate);}
+function syncTheme(){const dark=document.documentElement.dataset.theme==='dark';$('theme-toggle').setAttribute('aria-pressed',String(dark));$('theme-icon').textContent=dark?'☀':'☾';needsRender=true;}
+$('theme-toggle').onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('camera.theme.v1',next);}catch{}syncTheme();};
+syncTheme();
 $('language').value=getLanguage();$('language').onchange=()=>setLanguage($('language').value);document.addEventListener('camera-language-change',()=>{update();explain(activeControl);needsRender=true;});
 explain('aperture');update();resize();translateDOM();requestAnimationFrame(animate);
