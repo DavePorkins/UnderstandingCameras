@@ -39,7 +39,7 @@ export function drawCutaway(canvas,state,{active='aperture',hovered=null}={}){
  stroke(c,[[sensor+5*k,cy],[gain-37*k,cy]],'#91a58c',1.6*k);
  rect(c,gain-29*k,cy-20*k,58*k,40*k,'#e7eedf',5*k);c.strokeStyle='#799b87';c.lineWidth=1.5*k;c.strokeRect(gain-29*k,cy-20*k,58*k,40*k);
  for(let pin=-2;pin<=2;pin++){stroke(c,[[gain-36*k,cy+pin*7*k],[gain-29*k,cy+pin*7*k]],'#799b87',1.4*k);stroke(c,[[gain+29*k,cy+pin*7*k],[gain+36*k,cy+pin*7*k]],'#799b87',1.4*k);}
- textAt(c,'ISO',gain,cy-5*k,13*k,colors.teal);textAt(c,`×${(s.iso/100).toFixed(0)}`,gain,cy+12*k,13*k,colors.teal);
+ textAt(c,'ISO',gain,diagramMobile?cy+3*diagramRatio:cy-5*k,13*k,colors.teal);if(!diagramMobile)textAt(c,`×${(s.iso/100).toFixed(0)}`,gain,cy+12*k,13*k,colors.teal);
  textAt(c,'Signal',gain,cy-30*k,13*k,colors.muted);
  const lower=H*.81,r=Math.min(H*.07,31*k);dot(c,W*.10,lower,r,'#35594a');dot(c,W*.10,lower,r*1.4/s.aperture,'#e8efcf');
  textAt(c,`ƒ/${Number(s.aperture.toFixed(1))}`,W*.19,lower-font*.08,font,colors.amber,'left');textAt(c,`Pupille ${m.apertureDiameter.toFixed(1)} mm`,W*.19,lower+font*.9,font*.72,colors.muted,'left');
