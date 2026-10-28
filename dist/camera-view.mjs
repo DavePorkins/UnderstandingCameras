@@ -1,7 +1,7 @@
 import {metrics,cameraModel,clamp,distanceText,shutterText,actors,actorDistance,nearest,apertures,shutters,focalStops,isos} from './physics.mjs';
 import {tr} from './i18n.mjs';
 import {drawIris,pupilSection} from './pupil.mjs';
-export function diagramDragValue(key,start,dx,dy){if(key==='aperture')return nearest(apertures,clamp(start*2**(dy/70),1.4,22));if(key==='time')return nearest(shutters,clamp(start*2**(dy/35),1/8000,2));if(key==='iso')return nearest(isos,clamp(start*2**(-dy/35),100,12800));if(key==='focus')return clamp(start*2**(dx/100),.3,150);return nearest(focalStops,clamp(start*2**(-dx/120),2,200));}
+export function diagramDragValue(key,start,dx,dy){if(key==='aperture')return nearest(apertures,clamp(start*2**(dy/70),1.4,22));if(key==='time')return nearest(shutters,clamp(start*2**(dy/35),1/8000,2));if(key==='iso')return nearest(isos,clamp(start*2**(-dy/35),100,12800));if(key==='focus')return clamp(start*2**(dx/100),.3,100);return nearest(focalStops,clamp(start*2**(-dx/120),2,200));}
 const lightColors={ink:'#274b40',muted:'#7b8e7e',teal:'#2a8b78',amber:'#bd8b37',coral:'#bf7055',line:'#cbd8c3'},darkColors={ink:'#dce9e1',muted:'#a9bcb0',teal:'#72d0b8',amber:'#e7bc70',coral:'#e99e83',line:'#52655c'},colors={...lightColors};
 let diagramDark=false,diagramMobile=false,diagramRatio=1;
 const darkDiagramColors={'#f4f6eb':'#192821','#c06d55':'#efa68c','#739363':'#a9cd91','#6d8fa6':'#9bbfd9','#cbd8c3':'#52655c','#b8c7ae':'#52655c','#b59b62':'#cfb77e','#8c9a83':'#b5c3a8','#bc9d51':'#e3c77e','#e7eedf':'#263d32','#35594a':'#668c78','#e8efcf':'#d8e8bd','#d0e6d1':'#426851','#eeddbb':'#92743b','#d6c695':'#a18f58','#aab99d':'#6b8171'};
@@ -35,7 +35,7 @@ export function drawCutaway(canvas,state,{active='aperture',hovered=null}={}){
  const section=pupilSection(s),openingTop=clamp(section[1]*cam.irisDiameter*ys/2,1.5*k,half*.88),openingBottom=clamp(-section[0]*cam.irisDiameter*ys/2,1.5*k,half*.88);rect(c,iris-4*k,cy-half,8*k,half-openingTop,colors.ink);rect(c,iris-4*k,cy+openingBottom,8*k,half-openingBottom,colors.ink);
  const sh=g.sensorHeight;stroke(c,[[sensor,cy-sh/2],[sensor,cy+sh/2]],colors.teal,1.2*k);dot(c,sensor,cy-sh/2,2*k,colors.teal);dot(c,sensor,cy+sh/2,2*k,colors.teal);
  rect(c,shutter-8*k,cy-half+5*k,16*k,half*.33,'#617e70');rect(c,shutter-8*k,cy+half-half*.33-5*k,16*k,half*.33,'#b69a62');for(let i=1;i<4;i++){stroke(c,[[shutter-8*k,cy-half+5*k+i*half*.08],[shutter+8*k,cy-half+5*k+i*half*.08]],'#d2dbc266',k);stroke(c,[[shutter-8*k,cy+half-5*k-i*half*.08],[shutter+8*k,cy+half-5*k-i*half*.08]],'#e7d2a966',k);}
- textAt(c,'Sensor',sensor,cy-half-16*k,font*.8,colors.teal);
+ textAt(c,'Sensor',sensor,cy-sh/2-9*k,font*.8,colors.teal);
  for(const [i,p]of parts.entries())textAt(c,String(i+1),p.x,cy+half+26*k,font*.9,p.key==='aperture'?colors.amber:colors.teal);
  if(s.body==='dslr')stroke(c,[[rear+40*k,cy-half+15*k],[shutter-25*k,cy-half+15*k]],'#8c9e89',4*k);
  stroke(c,[[sensor+5*k,cy],[gain-37*k,cy]],'#91a58c',1.6*k);

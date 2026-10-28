@@ -1,6 +1,7 @@
+import {stringLights} from './dist/renderer.mjs';
 import assert from 'node:assert/strict';
 import {pupilOutline,polygonArea,pupilTransmission,pupilSection,shutterFrame} from './dist/pupil.mjs';
-import {tourSteps,demoSteps,interpolatedDemo} from './dist/journey.mjs';
+import {bokehExample,motionExample,tourSteps,demoSteps,interpolatedDemo} from './dist/journey.mjs';
 import {diagramDragValue} from './dist/camera-view.mjs';
 import {defaults,sensors,metrics,effective,changeSensor,decodeState,encodeState,cameraModel,actors,actorDistance,moveActor,atlasState,incidentMultiplier,meteredEV,windowEmissionMultiplier,projectPoint,apertures,shutters,isos,focalStops,nearest,shutterText} from './dist/physics.mjs';
 import {sceneObjects,armPose,grainSample,motionSmearPixels,pickColor} from './dist/renderer.mjs';
@@ -11,7 +12,8 @@ import {comparisonRows} from './dist/state-info.mjs';
 import {cutawayGeometry,roomGeometry} from './dist/camera-view.mjs';
 import {setLanguage,tr} from './dist/i18n.mjs';
 const close=(a,b,eps=1e-9)=>assert.ok(a===b||Math.abs(a-b)<eps,`${a} != ${b}`);
-let n=0;function test(name,fn){fn();console.log(`✓ ${name}`);n++;}
+let n=0;function test(name,fn){fn();
+console.log(`✓ ${name}`);n++;}
 test('50 mm on 36 mm sensor gives 39.598° horizontal field of view',()=>close(metrics({...defaults,focal:50}).fov,39.597752709049864));
 test('Thin lens image plane at 5 m is 50.505 mm for a 50 mm lens',()=>close(metrics(defaults).v,50.505050505050505));
 test('Focus plane blur is zero; both DOF bounds meet the selected circle criterion',()=>{for(const sensor of Object.keys(sensors)){const m=metrics({...defaults,sensor});close(m.blurAt(defaults.focus),0);close(m.blurAt(m.near),m.coc);close(m.blurAt(m.far),m.coc);}});
@@ -71,12 +73,20 @@ test('Two shutter curtains give each row exactly the selected exposure duration'
 test('All seven tutorial actions start unsolved and their actual solution states pass',()=>{assert.equal(tourSteps.length,7);for(const step of tourSteps){assert.equal(step.check(step.start),false,step.id);assert.equal(step.check({...step.start,...step.end}),true,step.id);}});
 test('Demonstration interpolation is deterministic, bounded and never mutates authored states',()=>{for(const step of demoSteps){const copy=structuredClone(step.start);for(const p of[0,.1,.4,.65,.9,1]){const a=interpolatedDemo(step,p);assert.deepEqual(a,interpolatedDemo(step,p));assert.ok(Object.values(a).filter(v=>typeof v==='number').every(Number.isFinite));const m=metrics(a);assert.ok(Number.isFinite(m.offset)&&m.near>0);}assert.deepEqual(step.start,copy);for(const [key,v]of Object.entries(step.end)){const value=interpolatedDemo(step,1)[key];typeof v==='number'?close(value,v,1e-8):assert.equal(value,v);}}});
 test('The cinematic dolly keeps the person size within five percent throughout its movement',()=>{const step=demoSteps.find(s=>s.id==='dolly'),initial=step.start.focal/step.start.subject;for(let p=0;p<=1;p+=.05){const s=interpolatedDemo(step,p);assert.ok(Math.abs(s.focal/(s.subject+s.cameraBack)/initial-1)<.05);close(effective(s).focus,s.subject+s.cameraBack);}});
-test('Direct manipulation follows the displayed component and clamps meaningful camera ranges',()=>{assert.ok(diagramDragValue('aperture',4,0,-100)<4);assert.ok(diagramDragValue('focal',50,-100,0)>50);assert.ok(diagramDragValue('focus',5,100,0)>5);assert.ok(diagramDragValue('time',1/125,0,100)>1/125);assert.equal(diagramDragValue('iso',100,0,-10000),12800);assert.equal(diagramDragValue('focus',5,10000,0),150);});
+test('Direct manipulation follows the displayed component and clamps meaningful camera ranges',()=>{assert.ok(diagramDragValue('aperture',4,0,-100)<4);assert.ok(diagramDragValue('focal',50,-100,0)>50);assert.ok(diagramDragValue('focus',5,100,0)>5);assert.ok(diagramDragValue('time',1/125,0,100)>1/125);assert.equal(diagramDragValue('iso',100,0,-10000),12800);assert.equal(diagramDragValue('focus',5,10000,0),100);});
 test('A/B reports pupil forms and legacy photos keep their original circular model',()=>{assert.ok(comparisonRows(defaults,{...defaults,pupilShape:'bat'}).some(r=>r.key==='Pupillenform'));const old={...defaults};delete old.pupilShape;delete old.bladeCount;delete old.roundedBlades;delete old.bokehLights;const restored=decodeState('#s='+encodeState(old));assert.equal(restored.pupilShape,'circle');assert.equal(restored.bokehLights,false);close(metrics(restored).physical,metrics(defaults).physical);});
 
 test('Reduced-motion demonstration uses discrete endpoints and no automatic scene movement',()=>{for(const step of demoSteps){for(const p of[.1,.8])assert.equal(interpolatedDemo(step,p,true).motion,false);}});
+test('Bokeh lesson has six unobstructed visible bulbs, measurable blur and a sharp subject',()=>{const s=bokehExample,m=metrics(s),W=900,H=600;let clear=0;for(const bulb of stringLights){const [x,y]=projectPoint(s,bulb.x,bulb.height,s.background,W,H);if(x>20&&x<W-20&&y>20&&y<H-20&&Math.abs(x-W/2)>W*s.focal/36/s.subject*.30)clear++;}assert.ok(clear>=6);close(m.blurAt(s.subject),0);assert.ok(m.blurAt(s.background)/36*W>16);assert.ok(metrics({...s,aperture:11}).blurAt(s.background)<m.blurAt(s.background)/7);});
+test('Motion lesson never walks the person out of frame and does not add unrelated lights',()=>{assert.equal(motionExample.bokehLights,false);for(let t=0;t<60;t+=.25){const person=sceneObjects(motionExample,t).find(o=>o.id==='person');close(person.x,motionExample.subjectX);assert.ok(sceneObjects(motionExample,t).some(o=>o.id==='hand'));}});
+test('Demo focus interpolation has over seventy distinct positions and no large within-chapter jumps',()=>{const step=demoSteps[0],samples=Array.from({length:121},(_,i)=>interpolatedDemo(step,i/120).focus);assert.ok(new Set(samples.map(v=>v.toFixed(5))).size>70);for(let i=1;i<samples.length;i++)assert.ok(Math.abs(samples[i]-samples[i-1])<.05);assert.equal(step.start.bokehLights,false);});
+
+
+test('Switching string lights never moves the background scenery',()=>{const a=sceneObjects({...bokehExample,bokehLights:true}),b=sceneObjects({...bokehExample,bokehLights:false});for(const id of['tree-left','tree-right','wall','person'])assert.deepEqual(a.find(o=>o.id===id),b.find(o=>o.id===id));assert.equal(decodeState('#s='+encodeState(bokehExample)).clearBackdrop,true);assert.equal(decodeState('#s='+encodeURIComponent(JSON.stringify({clearBackdrop:'invalid'}))).clearBackdrop,false);});
+
 let combinations=0;
 for(const sensor of Object.keys(sensors))for(const focal of focalStops)for(const aperture of apertures)for(const time of shutters)for(const iso of isos){const m=metrics({...defaults,sensor,focal,aperture,time,iso});assert.ok(m.near>0&&m.near<=defaults.focus&&m.far>=defaults.focus);assert.ok([m.physical,m.noise,m.offset,m.fov].every(Number.isFinite));combinations++;}
 let autoCases=0;
 for(const sensor of Object.keys(sensors))for(const mode of['M','A','S','P'])for(const ev of[3,8,11,16])for(const nd of[0,5,10])for(const autoISO of[false,true])for(const lampType of['street','spot']){const m=metrics({...defaults,sensor,mode,ev,nd,autoISO,lampType,lampOn:true}),s=m.s;assert.ok(s.iso>=100&&s.iso<=12800);assert.ok(s.time>=1/8000&&s.time<=2);assert.ok(s.aperture>=1.4&&s.aperture<=22);assert.ok(Number.isFinite(m.offset));autoCases++;}
 console.log(`\n${n} checks + ${combinations} manual combinations + ${autoCases} automatic/light cases passed.`);
+

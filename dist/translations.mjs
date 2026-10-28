@@ -1,4 +1,5 @@
 export const translations={
+ "Kulisse":"Backdrop", "Freier Hintergrund":"Clear backdrop", "Bäume im Hof":"Courtyard trees",
  "Kamera verstehen · Optik und Aufnahmetechnik": "Camera Explained · Optics and Camera Technology",
  "Kamera verstehen": "Camera Explained",
  "Kamera verstehen Start": "Camera Explained home",
@@ -27,7 +28,7 @@ export const translations={
  "Fokusdistanz": "Focus distance",
  "Fokus": "Focus",
  "fest": "fixed",
- "Automatik ein": "Auto setup",
+ "Automatik ein": "Enable auto",
  "Automatik aus": "Disable auto",
  "In der Kamera": "Inside the camera",
  "Bauteile anklicken": "Click a component",
@@ -42,7 +43,7 @@ export const translations={
  "Kamera": "Camera",
  "Laterne": "Streetlamp",
  "Spot": "Spotlight",
- "Objektiv": "Lens",
+ "Objektiv": "Lens assembly",
  "Verschluss": "Shutter",
  "Raum & Fokus": "Scene & focus",
  "Fokussieren": "Focus here",
@@ -415,5 +416,5 @@ export const translations={
  "Sony · Verschlussvorhänge": "Sony · Shutter curtains",
  "Pupillenformen werden für kleine, achsnahe Lichtpunkte geometrisch abgebildet. Iris und Motivmasken verändern Form und offene Fläche. Maskenverluste beeinflussen die Belichtung; die Zeitautomatik kann sie ausgleichen. Ganze Objektlagen bleiben vereinfacht weichgezeichnet. Wellenoptik, Abbildungsfehler und Randvignettierung sind keine vollständige Simulation.": "Pupil shapes are imaged geometrically for small, near-axis light sources. Iris and shaped masks change contour and open area. Mask losses affect exposure; auto shutter can compensate. Whole object layers retain simplified softening. Wave optics, aberrations and vignetting are not fully simulated.",
  "Das Verschlusslabor zeigt zwei Vorhänge mit einer beispielhaften Laufzeit von 4 ms. Die eingestellte Belichtungszeit gilt pro Sensorzeile, nicht für den gesamten Vorhangdurchlauf. Dies ist kein Messmodell einer bestimmten Kamera.": "The shutter lab shows two curtains with an illustrative 4 ms transit. The selected exposure duration applies to each sensor row, not the entire curtain sweep. This is not a measured model of a specific camera.",
- "Lichtpunkte im Hintergrund": "Background light sources"
+ "Lichtpunkte im Hintergrund": "String lights in background"
 };
