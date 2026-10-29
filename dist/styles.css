@@ -424,7 +424,7 @@ dialog{border:1px solid var(--line);border-radius:11px;background:var(--paper);c
 :root[data-layout=mobile] .light-source-row input[type=range]{height:35px}
 @media(max-width:700px){
  #learning-dialog{padding:8px;width:calc(100vw - 8px);height:calc(100dvh - 8px);max-height:calc(100dvh - 8px);overflow:auto}
- #learning-dialog[open]{grid-template-rows:auto 4px minmax(300px,40dvh) auto auto;gap:7px}
+ #learning-dialog[open]{grid-template-rows:min-content 4px minmax(300px,1fr) min-content min-content;gap:7px}
  .lesson-header{align-items:flex-start;gap:8px}.lesson-header h2{font-size:18px}
  .lesson-header-actions{flex-wrap:wrap;justify-content:flex-end;gap:4px}.lesson-header-actions>button[data-guide=keep]{display:none}
  .lesson-header-actions label{font-size:10px}
@@ -432,7 +432,7 @@ dialog{border:1px solid var(--line);border-radius:11px;background:var(--paper);c
  .lesson-visuals figcaption{font-size:10px;padding:3px 6px}
  .lesson-camera-stack.has-extra .lesson-camera{display:none}
  #lesson-live{font-size:10px;padding:3px 5px;bottom:4px;left:4px;right:4px}
- #lesson-controls{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));padding:6px;gap:4px}
+ #lesson-controls{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));padding:6px;gap:4px;min-height:max-content}
  .lesson-control{padding:4px;gap:3px}.lesson-control>span{font-size:12px}.lesson-control output{font-size:12px}.lesson-control input{height:28px}
  .lesson-card{grid-template-columns:1fr;gap:7px;padding:8px}
  .lesson-card p{font-size:13px}.lesson-navigation{justify-content:space-between}
