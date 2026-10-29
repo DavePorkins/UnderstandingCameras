@@ -26,7 +26,7 @@ Tour & Demo öffnet eine eigene Ansicht mit eigenen Reglern und Canvas-Flächen.
 
 Die geführte Tour hat acht Kapitel: Fokus, Blende, Brennweite, Bewegungsunschärfe, wenig Licht/Automatik, eigene Lichtquellen, Lamellen/Bokeh und Verschluss. Sie beginnt mit einem Fokusregler und fügt die jeweils benötigten Einstellungen hinzu. Aufnahmebild und Kameraschnitt bleiben im Blick; Raum und Verschlussdetail erscheinen nur in passenden Kapiteln. Aufgaben haben konkrete Zahlenziele. Ziel einstellen kennzeichnet das angewendete Beispiel ausdrücklich.
 
-Die Demo hat neun Kapitel und dauert etwa 2:25 Minuten. Ihr Zeiger folgt dem tatsächlich sichtbaren Regler. Weiche Übergänge sind direkt wählbar und standardmäßig aktiv. Pause hält Einstellung und Bewegungszeit an; manuelle Änderungen pausieren die automatische Einstellung. Die Verschlussfolge zeigt erst einen langsamen und dann einen schnellen vollständigen Ablauf.
+Die Demo hat neun Kapitel und dauert etwa 2:25 Minuten. Ihr Zeiger folgt dem tatsächlich sichtbaren Regler. Weiche Übergänge sind direkt wählbar und standardmäßig aktiv. Pause hält Einstellung und Bewegungszeit an; manuelle Änderungen pausieren die automatische Einstellung. Der separate Winken-Schalter kann anschließend die Motivbewegung starten, während die automatische Reglerfahrt pausiert bleibt. Die Verschlussfolge zeigt erst einen langsamen und dann einen schnellen vollständigen Ablauf.
 
 ## Blende und Verschluss vertiefen
 
@@ -34,19 +34,25 @@ Optik öffnet das Blenden-/Bokeh-Labor oder den Verschluss. Das Bokeh-Beispiel e
 
 Der Verschluss zeigt Öffnen, Belichten und Schließen als einzeln anwählbare Phasen. Die Lernzeitlupe dehnt Phasen unterschiedlich, damit Vorhangbewegungen auch bei langen Belichtungszeiten sichtbar bleiben. Reale Zeitverhältnisse ist ein zusätzlicher Vergleich. Die Positionen selbst stammen weiter aus dem physikalischen Zwei-Vorhang-Modell mit beispielhafter Laufzeit 4 ms. Die Belichtungszeit gilt für jede Zeile, nicht für die Gesamtdauer des Durchlaufs. Eine Folge endet nach dem Schließen und springt nicht unbemerkt zum Anfang.
 
+## Korrektur von Tiefenreihenfolge und Wiedergabe
+
+Die Szenenobjekte werden vor dem Zeichnen nach Entfernung sortiert. Dadurch verdeckt die Person einen weiter entfernten Ball korrekt; die Fokussierauswahl folgt derselben sichtbaren Reihenfolge. Ein vorzeitiges return hatte die Sortierung und Randkopien bisher übersprungen. Alle drei Animationsschleifen planen auch nach einem einzelnen Zeichenfehler den nächsten Frame; Fehler bleiben dabei sichtbar und werden nicht verschluckt. Läuft die Vorschau mit ausschließlich Tempo 0, erklärt ein Hinweis den unbewegten Aufbau.
+
 ## Prüfung und Grenzen
 
-`node verify.mjs`: 72 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
+`node verify.mjs`: 74 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
 
-`node verify-ui.mjs` bzw. `npm run test:ui`: 17 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
+`node verify-ui.mjs` bzw. `npm run test:ui`: 21 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
 
-Ein erster Desktop-Stand des neuen Lernraums wurde in Chrome visuell betrachtet. Die abschließende erneute Browser- und Mobilabnahme war bei der Fortsetzung nicht möglich, weil lokale Browsersteuerung in den Work-Einstellungen deaktiviert war. Vor einer Beamer-Vorführung ist diese praktische Sichtprüfung noch sinnvoll. Eine feste Bildrate auf jedem Gerät wird nicht zugesichert.
+Am 29.10.2026 war die Browsersteuerung wieder erreichbar. Der Lernraum, das manuelle Winken in einer pausierten Demo, die mobile Kameraansicht sowie die Verschlussphasen wurden im integrierten Browser praktisch geprüft (1280 × 720 und 390 × 844). Die frühere Schnittstellenmeldung „Local browser use is disabled in Work settings“ belegt keine bewusste Einstellungsänderung durch den Nutzer. Eine feste Bildrate auf jedem Gerät wird nicht zugesichert.
 
 Optik: idealisiertes Zwei-Gruppen-Modell bzw. ausdrücklich vereinfachtes Dünnlinsen-Schema. Keine Konstruktion eines bestimmten Objektivs und keine vollständige Wellenoptik, PSF-Faltung, Reflexions-, Schatten- oder Kollisionssimulation. Rauschen, Stabilisierung und Porträtmasken sind didaktische Näherungen. ISO sammelt keine zusätzlichen Photonen. Der Schärfebereich beschreibt ein Betrachtungskriterium, keine harte physikalische Grenze.
 
 Die Vorschau benutzt während Bewegung und Eingriffen eine begrenzte Rasterauflösung; angehaltene Aufnahmen werden höher aufgelöst berechnet.
 
 ## Sicherung und Hosting
+
+Vor der Korrektur wurde auch Version 12 (Commit a1edf87836f6d158eb899319bfbc5c36405f3229) unter outputs/Backups/2026-10-29-Version-12 gesichert.
 
 Vor dem Umbau wurde Version 11 (Commit c76fc1924cc81b0316acacf65d69929344df3e42) separat als Quellcode- und Webseiten-ZIP gesichert: outputs/Backups/2026-10-29-Version-11. Ältere Sicherungen bleiben erhalten.
 

@@ -26,7 +26,7 @@ export function sceneObjects(s,t=0){
  const animatedHeight=(z,height,margin)=>{const d=Math.max(.15,z+s.cameraBack),range=d*sensors[s.sensor].h/s.focal,lo=1.15-.51*range+margin,hi=1.15+.49*range-margin;return lo<hi?clamp(height,lo,hi):1.15;};
  const birdY=s.birdSpeed?animatedHeight(s.birdDistance,2.6,.32):2.6;
  const bounce=s.ballSpeed?Math.abs(Math.sin(t*s.ballSpeed*.65))*1.15:0,ballV=s.ballSpeed*.65*1.15*Math.cos(t*s.ballSpeed*.65)*Math.sign(Math.sin(t*s.ballSpeed*.65)||1);
- return [
+ const objects=[
  {id:'wall',type:'wall',x:0,z:s.background,height:3.8},
  ...(s.bokehLights?[{id:'light-string',type:'light-string',x:0,z:s.background,height:3.6},{id:'points',type:'points',x:0,z:s.background,height:3.6}]:[]),
  {id:'tree-left',type:'tree',x:s.clearBackdrop?-9:-3.2,z:s.background-.5,height:3.5},

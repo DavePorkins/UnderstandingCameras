@@ -1,4 +1,5 @@
 export const translations={
+ "Vorschau läuft, aber alle Tempos stehen auf 0. Unter Licht & Bewegung ein Tempo erhöhen.": "Preview is running, but all motion speeds are 0. Increase a speed under Light & motion.",
  "Eigenhelligkeit der Fenster · +1 EV = doppelt so hell":"Window emission · +1 EV = twice as bright", "Eigenhelligkeit der Lampen · +1 EV = doppelt so hell":"Bulb emission · +1 EV = twice as bright",
  "Lichterkette":"String lights", "Fensterhelligkeit":"Window brightness", "Lichterkettenhelligkeit":"String-light brightness", "Zu Englisch wechseln":"Switch to English",
  "Kulisse":"Backdrop", "Freier Hintergrund":"Clear backdrop", "Bäume im Hof":"Courtyard trees",

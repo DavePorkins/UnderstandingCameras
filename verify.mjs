@@ -16,6 +16,8 @@ import {setLanguage,tr} from './dist/i18n.mjs';
 const close=(a,b,eps=1e-9)=>assert.ok(a===b||Math.abs(a-b)<eps,`${a} != ${b}`);
 let n=0;function test(name,fn){fn();
 console.log(`✓ ${name}`);n++;}
+test('Scene layers follow physical depth with moving objects on either side of the person',()=>{for(const ballDistance of[3,8])for(const t of[0,.5,4,20]){const objects=sceneObjects({...defaults,subject:5,ballDistance},t);for(let i=1;i<objects.length;i++)assert.ok(objects[i-1].z>=objects[i].z);assert.equal(objects.findIndex(o=>o.id==='ball')<objects.findIndex(o=>o.id==='person'),ballDistance>5);}});
+test('An animated ball at the frame edge gets a seamless repeated copy',()=>{const s={...defaults,ballSpeed:1},half=(s.ballDistance+s.cameraBack)*sensors[s.sensor].w/s.focal/2,objects=sceneObjects({...s,ballX:s.cameraX-half+.05},0),balls=objects.filter(o=>o.id==='ball');assert.equal(balls.length,2);assert.equal(balls.filter(o=>o.wrapped).length,1);close(Math.abs(balls[0].x-balls[1].x),2*half);});
 test('50 mm on 36 mm sensor gives 39.598° horizontal field of view',()=>close(metrics({...defaults,focal:50}).fov,39.597752709049864));
 test('Thin lens image plane at 5 m is 50.505 mm for a 50 mm lens',()=>close(metrics(defaults).v,50.505050505050505));
 test('Focus plane blur is zero; both DOF bounds meet the selected circle criterion',()=>{for(const sensor of Object.keys(sensors)){const m=metrics({...defaults,sensor});close(m.blurAt(defaults.focus),0);close(m.blurAt(m.near),m.coc);close(m.blurAt(m.far),m.coc);}});
