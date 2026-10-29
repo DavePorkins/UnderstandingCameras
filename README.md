@@ -42,7 +42,7 @@ Die Szenenobjekte werden vor dem Zeichnen nach Entfernung sortiert. Dadurch verd
 
 `node verify.mjs`: 76 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
 
-`node verify-ui.mjs` bzw. `npm run test:ui`: 23 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
+`node verify-ui.mjs` bzw. `npm run test:ui`: 24 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
 
 Am 29.10.2026 war die Browsersteuerung wieder erreichbar. Der Lernraum, das manuelle Winken in einer pausierten Demo, die mobile Kameraansicht sowie die Verschlussphasen wurden im integrierten Browser praktisch geprüft (1280 × 720 und 390 × 844). Die frühere Schnittstellenmeldung „Local browser use is disabled in Work settings“ belegt keine bewusste Einstellungsänderung durch den Nutzer. Eine feste Bildrate auf jedem Gerät wird nicht zugesichert.
 
@@ -69,3 +69,15 @@ Die sichtbaren Lamellenflächen folgen genau der Pupillenkontur, die auch die ge
 Die bewegte Vorschau hat eine höhere Untergrenze für ihre Rasterauflösung; die vorhandene adaptive Begrenzung bleibt erhalten. Eine garantierte Bildrate oder eine vollständige Wellenoptik-Simulation ist damit nicht verbunden.
 
 Fachliche Quellen: [Nikon · Rounded Diaphragm](https://imaging.nikon.com/imaging/lineup/lens/glossary/), [Sony · Verschlussstruktur](https://support.d-imaging.sony.co.jp/support/ilc/flicker/01/en/).
+
+## Oberflächenfinish · Version 16
+
+Die Oberfläche verwendet eine neutrale blaue Grundpalette. Einstellungen, Kameraschnitt, Raumplan, Aufnahme und Lichtbereich haben jeweils durchgehende blaue, violette, rosafarbene, türkise und orange Flächen. Helle und dunkle Palette sind explizit abgestimmt; die Farben der simulierten Aufnahme bleiben unverändert.
+
+Die Lichtsektion beansprucht nur ihre Inhaltshöhe. Dadurch erhält das Foto mehr Fläche. Transparente Randbereiche übernehmen den Hintergrund des Aufnahmebereichs. Sensorformat und vollständiger Bildausschnitt bleiben erhalten; die Darstellung wird weder beschnitten noch gestreckt.
+
+Raumplan-Texte und Griffe besitzen eine von der Höhe unabhängige Mindestgröße. Auch die Auswahlradien skalieren mit der tatsächlichen Pixeldichte. Die Kamerabewegung wurde per Drag im Browser geprüft. Auto-/AF-Schalter stehen nach dem Zahlenwert ganz rechts, auch beim Weißabgleich.
+
+Unter Bild & Sensor erläutern ausklappbare Hinweise das Schärfekriterium, Stativ/Stabilisierung und ND. Fein prüfen · 2 Sensorpixel verändert die Bewertung und den grünen Bereich, nicht das optische Foto. Beim Stativvergleich mit 1/4 s empfiehlt die Erklärung Blende auf Auto, damit die Belichtung passt.
+
+24 Bedienungstestgruppen bestehen. Ein zusätzlicher Pixelvergleich bestätigt, dass sich das optische Foto beim Wechsel des Schärfekriteriums nicht ändert, während Stativ und Stabilisierung bei langer Belichtung tatsächlich einen Unterschied machen.

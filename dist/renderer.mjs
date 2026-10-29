@@ -45,7 +45,7 @@ export function sceneObjects(s,t=0){
 }
 export function drawPhoto(canvas,state,t=0,opts={}){
  const m=metrics(state),s=m.s,sensor=m.sensor,W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
- ctx.clearRect(0,0,W,H);ctx.fillStyle='#e7ebdf';ctx.fillRect(0,0,W,H);
+ ctx.clearRect(0,0,W,H);
  const ratio=sensor.w/sensor.h;let w=W,h=W/ratio;if(h>H){h=H;w=H*ratio;}const x0=(W-w)/2,y0=(H-h)/2;
  // Work at a bounded raster size; blur and noise remain interactive on laptops.
  const rw=Math.round(Math.min(w,opts.rasterWidth||(s.motion||opts.fast?720:1600))),rh=Math.round(rw/ratio),scale=rw/w;
