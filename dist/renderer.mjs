@@ -20,9 +20,11 @@ export function motionSmearPixels(s,speed,z,width){return speed*s.focal*s.time/M
 // Real scene positions shared by the cable, bulb housings and their optical spots.
 export const stringLights=Array.from({length:9},(_,i)=>({x:(i-4)*1.3,height:3.2+((i-4)/4)**2*.35,color:['#ffe8a8','#ffba7c','#ccecf0'][i%3]}));
 export function sceneObjects(s,t=0){
- const half=z=>Math.max(2,(z+s.cameraBack)*sensors[s.sensor].w/s.focal/2+.9);
- const travel=(v,z,x)=>{const span=(half(z)+Math.abs(x-s.cameraX))*2;return v?x+((t*v+span/2)%span+span)%span-span/2:x;};
- const walkAmp=half(s.subject),walk=s.speed?Math.sin(t*s.speed/walkAmp)*walkAmp:0,walkV=s.speed*Math.cos(t*s.speed/walkAmp);
+ const half=z=>Math.max(.05,(z+s.cameraBack)*sensors[s.sensor].w/s.focal/2);
+ const travel=(v,z,x)=>{const span=2*half(z),left=s.cameraX-span/2;return v?left+(((x-left+t*v)%span)+span)%span:x;};
+ const walkAmp=Math.max(.015,half(s.subject)-.35),walkPhase=Math.asin(clamp((s.subjectX-s.cameraX)/walkAmp,-1,1)),walkX=s.speed?s.cameraX+walkAmp*Math.sin(walkPhase+t*s.speed/walkAmp):s.subjectX,walkV=s.speed? s.speed*Math.cos(walkPhase+t*s.speed/walkAmp):0;
+ const animatedHeight=(z,height,margin)=>{const d=Math.max(.15,z+s.cameraBack),range=d*sensors[s.sensor].h/s.focal,lo=1.15-.51*range+margin,hi=1.15+.49*range-margin;return lo<hi?clamp(height,lo,hi):1.15;};
+ const birdY=s.birdSpeed?animatedHeight(s.birdDistance,2.6,.32):2.6;
  const bounce=s.ballSpeed?Math.abs(Math.sin(t*s.ballSpeed*.65))*1.15:0,ballV=s.ballSpeed*.65*1.15*Math.cos(t*s.ballSpeed*.65)*Math.sign(Math.sin(t*s.ballSpeed*.65)||1);
  return [
  {id:'wall',type:'wall',x:0,z:s.background,height:3.8},
@@ -31,14 +33,15 @@ export function sceneObjects(s,t=0){
  {id:'tree-right',type:'tree',x:s.clearBackdrop?9:3.7,z:s.background-1,height:4},
  {id:'bench',type:'bench',x:-1.7,z:s.background-2,height:.8},
  {id:'sculpture',type:'sculpture',x:s.sculptureX,z:s.sculpture,height:1.9},
- {id:'person',type:'person',x:s.subjectX+walk,z:s.subject,height:1.75,speed:Math.abs(walkV)},
- ...(s.waveSpeed>0?[{id:'hand',type:'hand',x:s.subjectX+walk,z:s.subject,height:1.95,speed:Math.abs(walkV),waveSpeed:s.waveSpeed}]:[]),
+ {id:'person',type:'person',x:walkX,z:s.subject,height:1.75,speed:Math.abs(walkV)},
+ ...(s.waveSpeed>0?[{id:'hand',type:'hand',x:walkX,z:s.subject,height:1.95,speed:Math.abs(walkV),waveSpeed:s.waveSpeed}]:[]),
  {id:'plant',type:'plant',x:s.plantX,z:s.foreground,height:1.05},
- {id:'ball',type:'ball',x:travel(s.ballSpeed*.35,s.ballDistance,s.ballX),z:s.ballDistance,y:bounce,height:.36,speed:s.ballSpeed*.35,verticalSpeed:ballV},
- {id:'bird',type:'bird',x:travel(s.birdSpeed,s.birdDistance,s.birdX),z:s.birdDistance,y:2.6,height:.6,width:.75,speed:s.birdSpeed},
- {id:'wings',type:'wings',x:travel(s.birdSpeed,s.birdDistance,s.birdX),z:s.birdDistance,y:2.6,height:.6,width:.75,speed:s.birdSpeed},
+ {id:'ball',type:'ball',x:travel(s.ballSpeed*.35,s.ballDistance,s.ballX),z:s.ballDistance,y:s.ballSpeed?animatedHeight(s.ballDistance,bounce,.38):bounce,height:.36,speed:s.ballSpeed*.35,verticalSpeed:Math.abs(animatedHeight(s.ballDistance,bounce,.38)-bounce)>.001?0:ballV},
+ {id:'bird',type:'bird',x:travel(s.birdSpeed,s.birdDistance,s.birdX),z:s.birdDistance,y:birdY,height:.6,width:.75,speed:s.birdSpeed},
+ {id:'wings',type:'wings',x:travel(s.birdSpeed,s.birdDistance,s.birdX),z:s.birdDistance,y:birdY,height:.6,width:.75,speed:s.birdSpeed},
  ...(s.lampOn?[{id:'lamp',type:'lamp',x:s.lampX,z:s.lampZ,height:2.9}]:[])
- ].sort((a,b)=>b.z-a.z);
+ ];
+ for(const obj of [...objects])if(['ball','bird','wings'].includes(obj.type)&&obj.speed){const span=2*half(obj.z),radius=obj.type==='ball'?.2:.4,left=s.cameraX-span/2,right=left+span;if(obj.x-radius<left)objects.push({...obj,x:obj.x+span,wrapped:true});if(obj.x+radius>right)objects.push({...obj,x:obj.x-span,wrapped:true});}return objects.sort((a,b)=>b.z-a.z);
 }
 export function drawPhoto(canvas,state,t=0,opts={}){
  const m=metrics(state),s=m.s,sensor=m.sensor,W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
@@ -154,7 +157,7 @@ export function drawPhoto(canvas,state,t=0,opts={}){
   if(copies===1)c.drawImage(layer,0,0);
   else {const[mv,mc]=buffer('movement',rw,rh);mc.globalCompositeOperation='lighter';mc.globalAlpha=1/copies;for(let n=0;n<copies;n++){const shift=(n/(copies-1)-.5)*Math.min(smear,rw);mc.drawImage(layer,shift,(n/(copies-1)-.5)*verticalSmear);}c.drawImage(mv,0,0);}
   c.restore();
-  if(s.lampOn||s.windowsOn||s.bokehLights){const[mask,mc]=buffer('light-mask',rw,rh);mc.drawImage(layer,0,0);mc.globalCompositeOperation='source-in';const factor=obj.type==='points'?1+2**(6-s.ev):incidentMultiplier(s,obj.x,obj.z,obj.height*.5),encoded=Math.round(clamp(Math.log2(factor)/16,0,1)*255);mc.fillStyle=`rgb(${encoded},0,0)`;mc.fillRect(0,0,rw,rh);mc.globalCompositeOperation='source-over';
+  if(s.lampOn||s.windowsOn||s.bokehLights){const[mask,mc]=buffer('light-mask',rw,rh);mc.drawImage(layer,0,0);mc.globalCompositeOperation='source-in';const factor=obj.type==='points'?1+2**((s.bokehEV??6)-s.ev):incidentMultiplier(s,obj.x,obj.z,obj.height*.5),encoded=Math.round(clamp(Math.log2(factor)/16,0,1)*255);mc.fillStyle=`rgb(${encoded},0,0)`;mc.fillRect(0,0,rw,rh);mc.globalCompositeOperation='source-over';
   if(obj.type==='wall'&&s.windowsOn){mc.save();mc.translate(px,py);mc.scale(q,q);const e=Math.round(clamp(Math.log2(windowEmissionMultiplier(s))/16,0,1)*255);mc.fillStyle=`rgb(${e},0,0)`;for(let xx=-13;xx<=13;xx+=1.6)mc.fillRect(xx,-3.2,1.05,1.9);mc.restore();}
   if(obj.type==='lamp'){mc.save();mc.translate(px,py);mc.scale(q,q);mc.fillStyle=`rgb(${Math.round(clamp((s.lampEV+1-s.ev)/16,0,1)*255)},0,0)`;if(s.lampType==='spot')mc.fillRect(-.13,-2.82,.35,.2);else mc.fillRect(.3,-2.83,.35,.12);mc.restore();}
   ic.save();ic.filter=`blur(${clamp(blur,0,36)}px)`;ic.drawImage(mask,0,0);ic.restore();}

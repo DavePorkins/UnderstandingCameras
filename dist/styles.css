@@ -365,3 +365,80 @@ dialog{border:1px solid var(--line);border-radius:11px;background:var(--paper);c
 :root[data-layout=mobile][data-guide] .camera-canvas-wrap{height:145px}
 :root[data-layout=mobile][data-guide] #mobile-quick>.field,:root[data-layout=mobile][data-guide] .component-links{display:none}
 #optics-dialog:has(#guide-bar:not([hidden])) #opt-example,#optics-dialog:has(#guide-bar:not([hidden])) #opt-restore{display:none}
+
+/* A separate learning workspace. Free-lab controls are never moved into it. */
+#learning-dialog{width:min(1540px,98vw);height:min(960px,96dvh);max-height:96dvh;padding:14px;border:1px solid var(--line);overflow:hidden;color:var(--ink);background:var(--bg)}
+#learning-dialog[open]{display:grid;grid-template-rows:auto 4px minmax(0,1fr) auto auto;gap:10px}
+.lesson-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.lesson-header h2{font-size:clamp(18px,1.6vw,26px);margin:3px 0;line-height:1.15}
+#lesson-kind{font:700 11px ui-monospace,monospace;color:var(--teal);letter-spacing:1px}
+.lesson-header-actions{display:flex;align-items:center;gap:10px;font-size:12px}
+.lesson-header-actions label{display:flex;align-items:center;gap:6px}
+.lesson-header-actions button{min-height:36px;font-size:12px}
+.lesson-exit{width:36px;font-size:23px!important}
+#learning-dialog progress{width:100%;height:4px;accent-color:var(--amber);margin:0}
+.lesson-visuals{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:12px;min-height:0}
+.lesson-visuals figure{margin:0;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden;min-height:0;min-width:0;display:flex;flex-direction:column}
+.lesson-visuals figcaption{font-size:12px;font-weight:650;padding:6px 9px;flex-shrink:0;border-bottom:1px solid var(--line)}
+.lesson-visuals canvas{display:block;width:100%;height:100%;min-height:0;flex:1;touch-action:none}
+.lesson-photo{position:relative}
+#lesson-live{position:absolute;bottom:7px;left:7px;right:7px;padding:5px 7px;border-radius:4px;background:#173b31df;color:#f0f5e7;font:12px ui-monospace,monospace;pointer-events:none}
+.lesson-camera-stack{display:flex;flex-direction:column;gap:9px;min-height:0}
+.lesson-camera{flex:1}
+#lesson-extra{flex:1}
+#lesson-controls{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:9px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;min-height:0}
+.lesson-control{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 10px;border:2px solid transparent;border-radius:6px;padding:7px}
+.lesson-control>span{font-size:13px;font-weight:600}
+.lesson-control output{font:15px ui-monospace,monospace;color:var(--teal)}
+.lesson-control input{grid-column:1/-1;height:30px}
+.lesson-control.is-target{border-color:#c99940;background:#c9994015}
+.lesson-special{grid-column:1/-1;display:flex;align-items:center;gap:12px;font-size:13px;flex-wrap:wrap}
+.lesson-special label{display:flex;gap:7px;align-items:center}.lesson-special button{min-height:36px;font-size:12px}
+#learn-phase{width:auto;flex:1;min-width:100px}
+.lesson-pointer{position:absolute;pointer-events:none;z-index:5;font-size:29px;font-weight:800;color:#8d5c0b;text-shadow:0 0 4px #fff8d6;transition:left .035s linear;line-height:1}
+.lesson-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:11px 14px;border:1px solid #bf923d;border-left:5px solid #bf923d;border-radius:7px;background:#fff4d8;color:#304336}
+.lesson-card p{font-size:14px;line-height:1.4;margin:4px 0}
+.lesson-card b{font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+.lesson-card details{font-size:12px;margin-top:6px}
+.lesson-card details p{font-size:13px}
+.lesson-result{font-size:12px;color:#426747}
+.lesson-navigation{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.lesson-navigation button{min-height:38px;font-size:12px}
+:root[data-theme=dark] .lesson-card{background:#372f20;color:#f1e5c7}
+:root[data-theme=dark] .lesson-result{color:#b6d7ac}
+:root[data-theme=dark] .lesson-pointer{color:#f4d489;text-shadow:0 0 4px #101a16}
+#learning-dialog .lesson-card h3{font-size:18px;margin:0}
+.shutter-teaching-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;padding:5px 8px;font-size:11px}
+.shutter-teaching-controls label{display:flex;align-items:center;gap:4px}
+#opt-shutter{height:calc(100% - 112px)}
+.light-controls{display:block}
+.light-source-row{display:grid;grid-template-columns:85px 100px minmax(55px,1fr) 48px;align-items:center;gap:6px;margin:5px 0}
+.light-source-row label{display:flex;align-items:center;gap:4px;font-size:11px}
+.light-source-row input[type=range]{min-width:40px;accent-color:var(--amber);height:17px}
+.light-source-row>input:not(#lampEV){grid-column:2/4}
+.light-source-row output{font:10px ui-monospace,monospace;color:var(--amber)}
+#language{min-width:60px;font:600 12px ui-monospace,monospace}
+:root[data-layout=mobile] #theme-toggle>span:last-child{display:inline;font-size:12px}
+:root[data-layout=mobile] .light-source-row{grid-template-columns:90px 95px minmax(55px,1fr) 48px}
+:root[data-layout=mobile] .light-source-row label{font-size:13px}
+:root[data-layout=mobile] .light-source-row input[type=range]{height:35px}
+@media(max-width:700px){
+ #learning-dialog{padding:8px;width:calc(100vw - 8px);height:calc(100dvh - 8px);max-height:calc(100dvh - 8px);overflow:auto}
+ #learning-dialog[open]{grid-template-rows:auto 4px minmax(300px,40dvh) auto auto;gap:7px}
+ .lesson-header{align-items:flex-start;gap:8px}.lesson-header h2{font-size:18px}
+ .lesson-header-actions{flex-wrap:wrap;justify-content:flex-end;gap:4px}.lesson-header-actions>button[data-guide=keep]{display:none}
+ .lesson-header-actions label{font-size:10px}
+ .lesson-visuals{grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:6px;position:sticky;top:0;z-index:3;background:var(--bg)}
+ .lesson-visuals figcaption{font-size:10px;padding:3px 6px}
+ .lesson-camera-stack.has-extra .lesson-camera{display:none}
+ #lesson-live{font-size:10px;padding:3px 5px;bottom:4px;left:4px;right:4px}
+ #lesson-controls{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));padding:6px;gap:4px}
+ .lesson-control{padding:4px;gap:3px}.lesson-control>span{font-size:12px}.lesson-control output{font-size:12px}.lesson-control input{height:28px}
+ .lesson-card{grid-template-columns:1fr;gap:7px;padding:8px}
+ .lesson-card p{font-size:13px}.lesson-navigation{justify-content:space-between}
+ .lesson-navigation button{flex:1;font-size:11px;min-height:36px;padding:5px}
+ .lesson-pointer{font-size:25px}.lesson-special{gap:6px;font-size:12px}
+}
+@media(min-width:701px) and (max-height:720px){#learning-dialog[open]{gap:6px}.lesson-card{padding:7px 10px}.lesson-card p{font-size:13px}#lesson-controls{padding:5px 8px}.lesson-header h2{font-size:20px}}
+
+:root[data-layout=desktop] .result-column{grid-template-rows:minmax(220px,1.6fr) minmax(350px,1fr)}

@@ -1,7 +1,7 @@
 import {metrics,cameraModel,clamp,distanceText,shutterText,actors,actorDistance,nearest,apertures,shutters,focalStops,isos} from './physics.mjs';
 import {tr} from './i18n.mjs';
 import {drawIris,pupilSection} from './pupil.mjs';
-export function diagramDragValue(key,start,dx,dy){if(key==='aperture')return nearest(apertures,clamp(start*2**(dy/70),1.4,22));if(key==='time')return nearest(shutters,clamp(start*2**(dy/35),1/8000,2));if(key==='iso')return nearest(isos,clamp(start*2**(-dy/35),100,12800));if(key==='focus')return clamp(start*2**(dx/100),.3,100);return nearest(focalStops,clamp(start*2**(-dx/120),2,200));}
+export function diagramDragValue(key,start,dx,dy){if(key==='aperture')return clamp(start*2**(dy/70),1.4,22);if(key==='time')return nearest(shutters,clamp(start*2**(dy/35),1/8000,2));if(key==='iso')return nearest(isos,clamp(start*2**(-dy/35),100,12800));if(key==='focus')return clamp(start*2**(dx/100),.3,50);return clamp(start*2**(-dx/120),2,200);}
 const lightColors={ink:'#274b40',muted:'#7b8e7e',teal:'#2a8b78',amber:'#bd8b37',coral:'#bf7055',line:'#cbd8c3'},darkColors={ink:'#dce9e1',muted:'#a9bcb0',teal:'#72d0b8',amber:'#e7bc70',coral:'#e99e83',line:'#52655c'},colors={...lightColors};
 let diagramDark=false,diagramMobile=false,diagramRatio=1;
 const darkDiagramColors={'#f4f6eb':'#192821','#c06d55':'#efa68c','#739363':'#a9cd91','#6d8fa6':'#9bbfd9','#cbd8c3':'#52655c','#b8c7ae':'#52655c','#b59b62':'#cfb77e','#8c9a83':'#b5c3a8','#bc9d51':'#e3c77e','#e7eedf':'#263d32','#35594a':'#668c78','#e8efcf':'#d8e8bd','#d0e6d1':'#426851','#eeddbb':'#92743b','#d6c695':'#a18f58','#aab99d':'#6b8171'};

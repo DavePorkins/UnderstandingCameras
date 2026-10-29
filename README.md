@@ -1,81 +1,53 @@
-# Kamera verstehen · Optik und Aufnahmetechnik (Tour, Optik, Desktop und Mobil)
+# Kamera verstehen · Lernraum und freies Labor
 
-Browserbasiertes Lehrlabor für digitale Fotografie mit deutscher und englischer Oberfläche. Statisches Hosting, keine Analyse-Tracker, keine Kamera- oder Mikrofonberechtigung. QR-Codes entstehen lokal mit qrcode-generator (MIT, Lizenz unter `dist/vendor/`).
+Browserbasiertes Lehrlabor für digitale Fotografie. Deutsch und Englisch; helles und dunkles Farbschema. Statisches Hosting ohne Analyse-Tracker und ohne Kamera- oder Mikrofonberechtigung.
 
-## Starten
+## Start
 
-`python -m http.server 8000 --directory dist` im Projektordner ausführen, anschließend http://localhost:8000 öffnen. Die Modulversion benötigt HTTP. Die zusätzliche eigenständige `Kamera-verstehen.html` enthält Styles, Skripte und QR-Bibliothek in einer Datei und kann offline geöffnet werden.
+Modulversion: `python -m http.server 8000 --directory dist`, dann http://localhost:8000. Die zusätzliche Kamera-verstehen.html ist ein eigenständiges Offline-Dokument. Der öffentliche Sites-Ursprung bleibt https://kamera-verstehen.daveporkins.chatgpt.site/.
 
-## Bedienung
+## Freies Labor
 
-- Bis 900 px Fensterbreite startet eine eigene mobile Anordnung mit fester Bildvorschau, vier Tabs und einem scrollbaren Arbeitsbereich. Querformat zeigt Bild und Bedienung nebeneinander. Im Menü kann Automatisch, Mobil oder Desktop gewählt werden; die Anordnung wird lokal gespeichert. Die mobile Darstellung ist in `dist/mobile.mjs` und einem eigenen CSS-Bereich gekapselt. Vorhandene Bedienelemente werden verschoben, nicht dupliziert; es gibt einen gemeinsamen Simulationszustand.
-- Die Arbeitsfläche passt sich dem verfügbaren Desktopfenster an. Vollbild nutzt die Browserfunktion; Esc beendet sie. Kleine Fenster skalieren die Fläche, wodurch Schrift kleiner wird. Für den Beamer ist ein großes Fenster empfohlen.
-- Dunkel oben neben der Sprache schaltet das Farbschema um. Die Auswahl bleibt lokal gespeichert; beim ersten Besuch gilt die Systemeinstellung. Diagramme und Dialoge wechseln mit, die simulierte Aufnahme behält ihre Belichtung.
-- Deutsch/English oben wählen. `?lang=en` öffnet direkt Englisch; geteilte Links übernehmen die Sprache.
-- Kamera und Objekte im Raumplan ziehen. Nach unten im Plan bedeutet nach rechts im Foto. Doppelklick im Plan oder Klick auf ein sichtbares Objekt im Foto fokussiert. Die Kamera verändert ihren Standort, während Weltpositionen der Objekte bestehen bleiben.
-- Komponenten im Kameraschnitt wählen: Der passende Regler wird markiert. Sensorgröße folgt dem Format und bleibt beim Zoomen unverändert. Mehrere Motivpunkte zeigen, wie unscharfe Entfernungen Kreise auf dem Sensor erzeugen.
-- Automatik ein aktiviert P, AF und Auto-WB. Automatik aus übernimmt die erreichten Werte als manuelle Einstellungen. Einzelne Automatiken bleiben getrennt nutzbar. Smartphone-Blende ist fest; der Wert für Wechselobjektive bleibt erhalten.
-- Mobil liegen Bildoptionen, Messwerte und A/B-Vergleich hinter den drei Punkten am Aufnahmebild. Menü, Experimente, Atlas, Galerie und Freigabe sind unter ☰ erreichbar. Dort lässt sich die Vorschaugröße wählen. Der Raumplan unterstützt Ziehen; die zusätzliche Objektauswahl erlaubt Fokussieren ohne Doppeltippen.
-- Die acht Übungen starten direkt im Labor. Mobil werden passende Regler vorausgewählt, andere lassen sich über Alle Regler zeigen einblenden. Der farbige Lernbereich zeigt Ziel, Fortschritt und automatische Erfolgserkennung. Licht und Bewegung sind während der Aufgabe festgelegt. Das Ausgangsbild bleibt für den Vergleich erhalten; danach führt Weiter zur nächsten Übung.
-- Die Galerie speichert bis zu 20 Fotos mitsamt Einstellungen lokal. Vergleiche und PNG-Export verwenden die wirklich gespeicherten Bilder. Galerie sichern exportiert eine JSON-Datei; Galerie importieren ergänzt gültige Aufnahmen ohne Duplikate. Reset löscht keine Fotos. Löschen von Browserdaten oder ein anderer Website-Ursprung trennt den Speicher; deshalb vor einem Umzug sichern.
-- Teilen zeigt Link und QR-Code, optional mit Einstellungen. Galerieaufnahmen werden nicht im Link übertragen und nicht auf dem Server veröffentlicht.
-- Der Sensoratlas vergleicht sechs Formate am gleichen Standort, entweder mit gleichem horizontalem Bildwinkel oder gleicher realer Brennweite. Zeitautomatik gleicht die Belichtung an.
-- Straßenlampe erzeugt breites Licht, der Spot eine drehbare Richtkeule. Leistung wird als EV100 bei 1 m angegeben. Automatik misst das ausgewählte Motiv; der EV-Wert im Aufnahmefeld beschreibt dagegen die Umgebungsreferenz. Fenster sind selbstleuchtende Flächen und beeinflussen die Beleuchtung anderer Objekte nicht.
+Kameraquerschnitt, Aufnahme, Raumplan und Einstellungen teilen einen Simulationszustand. Kamera und Objekte im Raumplan ziehen, Bauteile im Kameraschnitt verändern oder Regler benutzen. Brennweite und Blende sind kontinuierlich; Belichtungszeit und ISO bieten Stufen. Der reguläre Fokusregler endet bei 50 m; ältere geteilte Konfigurationen bleiben lesbar. Ein Klick auf ein sichtbares Motiv fokussiert auf dessen Tiefe.
 
-## Prüfung
+Die mobile Anordnung verschiebt die ursprünglichen Bedienelemente ohne Duplikate. Eine feste Bildvorschau, Tabs und ein scrollbarer Arbeitsbereich passen die Bedienung an kleine Bildschirme an. Im Menü ist der Wechsel zwischen automatischer, mobiler und Desktop-Anordnung möglich.
 
-`node verify.mjs` prüft 65 Eigenschaften sowie 352.944 manuelle Kombinationen aus Sensorformat, Brennweite, Blende, Zeit und ISO und 1.152 Automatik-/Lichtfälle. Das umfasst Optik, Schärfentiefe, Formatwechsel, Automatikgrenzen, Licht, Aufgabenlösungen, Übersetzungen, Galerie und QR-Erzeugung. Browserprüfungen ergänzen die rechnerischen Tests; siehe separaten Prüfbericht.
+DE / EN schaltet die Sprache mit einem Klick. Der Theme-Schalter nennt den nächsten Modus (Hell/Dunkel bzw. Light/Dark). Beide Einstellungen werden lokal gespeichert.
 
-## Modellgrenzen
+Unter Licht & Bewegung haben Laterne/Spot, Fenster und Lichterkette eigene Helligkeitsregler. Die Nachtvorgabe aktiviert Fenster und Lichterkette; beide können unabhängig ausgeschaltet werden. +1 EV verdoppelt die jeweilige Emission bzw. Lampenleistung. Laterne und Spot beleuchten den Raum über ein vereinfachtes Abstandsgesetz und eine Richtkeule. Fenster und Lichterkette sind selbstleuchtende Motive und werfen im Modell kein Licht auf andere Objekte.
 
-Idealisiertes Schema mit zwei Linsengruppen, keine Konstruktion eines konkreten Objektivs. Strahlen verwenden paraxiale Optik; Abstände im Schnitt sind komprimiert. Das Fokusdetail und seine Kreisgrößen werden getrennt vergrößert. Numerische Schärfentiefe und Unschärfekreise verwenden die Dünnlinsen-Näherung. Der Schärfebereich bezeichnet ein Kriterium akzeptabler Schärfe, keine harte physikalische Grenze.
+Gehende Personen kehren innerhalb des sichtbaren Bildbereichs um. Ball und Vogel laufen an der Bildgrenze weiter; am Übergang zeichnen Randkopien den kontinuierlichen Wiederholungsweg. Die animierten Bahnen passen sich dem Bildfeld an. Es handelt sich um bewusst wiederholbare Demonstrationsbewegung, nicht um eine Welt- oder Kollisionssimulation.
 
-Die 2,5D-Szene verwendet Objektlagen. Lampenlicht wird je Objekt und auf einer Bodenebene angenähert; keine berechneten Schatten, Reflexionen oder spektrales Mischlicht. Das Abstandsgesetz ist im Nahbereich begrenzt. Rauschen, Weißabgleich, Stabilisierung, Porträteffekt und Bewegungsintegration sind didaktische Näherungen. ISO sammelt keine zusätzlichen Photonen. Die Erläuterung zu Dual Native ISO verwendet Herstellerangaben, simuliert aber keine gerätespezifischen Rauschkurven.
+Die acht ursprünglichen Übungen, Sensoratlas, A/B-Vergleich, Galerie und QR-Freigabe bleiben erhalten. Fotos samt Einstellungen liegen nur im lokalen Browserspeicher. Galerie sichern/importieren erzeugt bzw. liest eine lokale JSON-Sicherung. Reset löscht keine Fotos. Ein anderer Ursprung hat einen anderen lokalen Speicher. QR-Codes entstehen lokal mit qrcode-generator (MIT; Lizenz unter dist/vendor).
 
-Auflösung verändert Pixelabstand und Schärfekriterium, nicht die Pixelzahl der Vorschau. Beugungsweichheit wird auf die Ausgabe bezogen. Bewegte Vorschauen rendern mit begrenzter Auflösung und zielen auf 30 Bilder/s; Leistung hängt vom Gerät ab.
+## Separater Lernraum
 
-## Hosting und Daten
+Tour & Demo öffnet eine eigene Ansicht mit eigenen Reglern und Canvas-Flächen. Die Regler des freien Labors werden nicht darin wiederverwendet oder während der Vorführung laufend umgebaut. Das Simulationsmodell bleibt gemeinsam. Beim Beenden kann der vorherige Aufbau einschließlich aktiver Übung wiederhergestellt oder der Lernaufbau übernommen werden.
 
-`dist/` kann auf einem statischen Hoster veröffentlicht werden. Das portable Quellcodepaket enthält diese Dateien im Wurzelverzeichnis; für GitHub Pages `/(root)` wählen. `.nojekyll` liegt bei. `.openai/hosting.json` gehört zum bestehenden Sites-Projekt und wird nicht in das portable Paket kopiert.
+Die geführte Tour hat acht Kapitel: Fokus, Blende, Brennweite, Bewegungsunschärfe, wenig Licht/Automatik, eigene Lichtquellen, Lamellen/Bokeh und Verschluss. Sie beginnt mit einem Fokusregler und fügt die jeweils benötigten Einstellungen hinzu. Aufnahmebild und Kameraschnitt bleiben im Blick; Raum und Verschlussdetail erscheinen nur in passenden Kapiteln. Aufgaben haben konkrete Zahlenziele. Ziel einstellen kennzeichnet das angewendete Beispiel ausdrücklich.
 
-Die Anwendung lädt keine externen Schriften, Fotos oder QR-Dienste nach. Galerieaufnahmen bleiben lokal. Die öffentliche Freigabe der Website veröffentlicht keine lokalen Galerien. Externe Quellenlinks werden erst beim Öffnen besucht.
+Die Demo hat neun Kapitel und dauert etwa 2:25 Minuten. Ihr Zeiger folgt dem tatsächlich sichtbaren Regler. Weiche Übergänge sind direkt wählbar und standardmäßig aktiv. Pause hält Einstellung und Bewegungszeit an; manuelle Änderungen pausieren die automatische Einstellung. Die Verschlussfolge zeigt erst einen langsamen und dann einen schnellen vollständigen Ablauf.
 
-## Geführter Einstieg und Optiklabor
+## Blende und Verschluss vertiefen
 
-- **Tour & Demo** in der Hauptnavigation öffnet den Einstieg. Auf Mobilgeräten steht der Einstieg zusätzlich im Reglerbereich und im Menü. Frei erkunden ist jederzeit möglich; es gibt keinen erzwungenen Kursstart.
-- **Geführte Tour**: sieben interaktive Schritte zu Fokus, Blende, Ausschnitt, Bewegung, wenig Licht, Pupillenform und Verschluss. Die Tour prüft die tatsächlichen Zustände. Zurück, Weiter, Überspringen und Ziel einstellen sind getrennte Aktionen. Bestehende Übungen werden währenddessen ausgesetzt. Beim Beenden wird der vorherige Kamera- und Übungszustand wiederhergestellt; Mit diesem Aufbau weiter übernimmt ausdrücklich das neue Beispiel.
-- **Demo ansehen**: acht deterministische Kapitel, zusammen ungefähr 2 Minuten 9 Sekunden. Fokusfahrt, Öffnen der Blende, Zoom, Kamerarückfahrt, Bewegung, Nacht, Lamellenform und Verschluss. Pause/Fortsetzen, Kapitelwechsel und Abbruch bleiben erreichbar. Manuelle Eingaben pausieren die Demo. Bei reduzierter Bewegung werden diskrete Zustände gezeigt und automatische Szenenbewegung unterdrückt. Keine automatische Sprachausgabe und kein Videoexport.
-- **Optik** am Kameraschnitt bzw. **Optiklabor** im mobilen Kamerabereich öffnet die Vertiefung. Blende & Bokeh zeigt Irisfront, vergrößerten geometrischen Lichtfleck, Strahlen und dasselbe Foto. Die Öffnung kann radial gezogen oder mit Pfeiltasten verändert werden. Öffnungsform: runde Referenz, Iris mit 5/6/7/9/11 Lamellen, gerundete Lamellen. Frühere gespeicherte Formmasken bleiben lesbar, werden aber nicht im Einstieg angeboten. A merken und A/B vergleichen verwenden denselben Vergleichsspeicher wie das Hauptlabor.
-- **Verschluss & Zeit** zeigt zwei Vorhänge vor dem Sensor mit Abspielknopf und Phasenschieber. Der beispielhafte Vorhanglauf beträgt 4 ms. Bei kurzer Zeit entsteht ein wandernder Spalt; die gewählte Belichtungsdauer gilt pro Zeile. Das ist ein mechanisches Vergleichsmodell, keine Simulation aller Kameraarten. Smartphones integrieren elektronisch.
-- **Kameraschnitt direkt bedienen**: Objektiv- und Fokusgruppe horizontal ziehen; Blende, Zeit und ISO vertikal. Die Alternative über Regler bleibt vorhanden. Ein Doppelklick öffnet die zugehörige Vertiefung. Die Linsenbewegung ist eine schematische Abstraktion eines Zwei-Gruppen-Modells.
-- **Lichtpunkte im Hintergrund** sind unter Bild & Sensor zuschaltbar. Ihre Tiefe folgt der Hintergrundeinstellung. Die Pupillenform beeinflusst ihre geometrischen Defokusflächen. Die Form kehrt sich im Modell vor/hinter der Fokusebene um.
+Optik öffnet das Blenden-/Bokeh-Labor oder den Verschluss. Das Bokeh-Beispiel enthält eine Person bei 5 m und eine erkennbare Lichterkette bei 30 m. Zwischen Person und Lampen fokussieren, Öffnung und gerundete Lamellen vergleichen. Frühere Formmasken bleiben lesbar, werden im Einstieg aber nicht angeboten.
 
-### Erweiterte Modellannahmen
+Der Verschluss zeigt Öffnen, Belichten und Schließen als einzeln anwählbare Phasen. Die Lernzeitlupe dehnt Phasen unterschiedlich, damit Vorhangbewegungen auch bei langen Belichtungszeiten sichtbar bleiben. Reale Zeitverhältnisse ist ein zusätzlicher Vergleich. Die Positionen selbst stammen weiter aus dem physikalischen Zwei-Vorhang-Modell mit beispielhafter Laufzeit 4 ms. Die Belichtungszeit gilt für jede Zeile, nicht für die Gesamtdauer des Durchlaufs. Eine Folge endet nach dem Schließen und springt nicht unbemerkt zum Anfang.
 
-Für nichtkreisförmige Pupillen ist die Blendenzahl eine Referenz zum umschreibenden Durchmesser. Die offene Fläche wird geometrisch ermittelt und als Transmission gegenüber der Kreisreferenz berücksichtigt. Manuelle Belichtung wird entsprechend dunkler; Automatik kann kompensieren. Der Unschärfedurchmesser und die numerische Schärfentiefe verwenden weiterhin die umschreibende runde Referenz. Der vertikale Strahlenschnitt verwendet die tatsächlich offene axiale Pupillensektion.
+## Prüfung und Grenzen
 
-Lichtpunkte werden geometrisch abgebildet; ganze Objekte bleiben geglättete 2,5D-Lagen. Keine vollständige PSF-Faltung, Wellenoptik, Objektivfehler, Vignettierung oder gerätespezifische Messkurven. Ein exakt fokussierter Punkt bleibt geometrisch ein Punkt. Sehr kleine Öffnungen unterliegen in der Wirklichkeit der Beugung; eine Lochkamera macht nicht automatisch alles perfekt scharf. Eine Motivmaske ist keine Projektion des Motivs durch eine Jalousie.
+`node verify.mjs`: 72 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
 
-### Regressionsprüfung
+`node verify-ui.mjs` bzw. `npm run test:ui`: 17 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
 
-`node verify.mjs` umfasst nun 65 Prüfungen sowie weiterhin 352.944 manuelle Kombinationen und 1.152 Automatik-/Lichtfälle. Neue Fälle prüfen Pupillenflächen, Maskenverluste, Strahlen, Verschlusszeilen, erreichbare Tourziele, deterministische Demostände, Direktmanipulation, Legacy-Fotos und reduzierte Bewegung.
+Ein erster Desktop-Stand des neuen Lernraums wurde in Chrome visuell betrachtet. Die abschließende erneute Browser- und Mobilabnahme war bei der Fortsetzung nicht möglich, weil lokale Browsersteuerung in den Work-Einstellungen deaktiviert war. Vor einer Beamer-Vorführung ist diese praktische Sichtprüfung noch sinnvoll. Eine feste Bildrate auf jedem Gerät wird nicht zugesichert.
 
-`npm install` installiert ausschließlich Entwicklungswerkzeuge. `npm run test:ui` führt 14 isolierte DOM-/Komponententests mit Happy DOM und Skia aus. Es gibt keine Abhängigkeiten dieser Werkzeuge im veröffentlichten Browsercode. Der Test bildet ausdrücklich kein CSS-Layout und keinen echten Browser ab. Er prüft gemeinsame Regler, A/B, Tour/Demo, Wiederherstellung, Layout-Reparenting, Sprache, Theme, Zeichnungsereignisse und Galerie. Im lokalen Codex-Workspace sind Testabhängigkeiten außerdem außerhalb des Checkout verfügbar.
+Optik: idealisiertes Zwei-Gruppen-Modell bzw. ausdrücklich vereinfachtes Dünnlinsen-Schema. Keine Konstruktion eines bestimmten Objektivs und keine vollständige Wellenoptik, PSF-Faltung, Reflexions-, Schatten- oder Kollisionssimulation. Rauschen, Stabilisierung und Porträtmasken sind didaktische Näherungen. ISO sammelt keine zusätzlichen Photonen. Der Schärfebereich beschreibt ein Betrachtungskriterium, keine harte physikalische Grenze.
 
-Am 29.10.2026 wurden die neuen Ansichten in echtem Chrome geprüft: 1366 × 768, 1024 × 768 und mobiles Hochformat 390 × 844, helle/dunkle sowie deutsche/englische Ansicht. Alle Tourkapitel einschließlich Abschluss, Fokuswechsel an der Lichterkette und Verschlussvergleich wurden bedient. Mobile Größe ist eine Browser-Viewportprüfung, kein physischer iPhone-/Android-Test. Eine geräteübergreifende Garantie der Bildrate wird nicht behauptet.
+Die Vorschau benutzt während Bewegung und Eingriffen eine begrenzte Rasterauflösung; angehaltene Aufnahmen werden höher aufgelöst berechnet.
 
-### Sicherung vor dem Umbau
+## Sicherung und Hosting
 
-Version 9 mit Quellcommit `54ce1bf770177c3061c33fdb688775292d7c9c61` ist als Source- und Webseiten-ZIP außerhalb dieses Checkout gesichert. Sie bleibt als gespeicherte Sites-Version erneut veröffentlichbar. Der Ordner `outputs/Backups/2026-10-28-Version-9` enthält Anleitung und SHA-256-Prüfsummen. Galerieaufnahmen bleiben lokal und werden nicht öffentlich eingebettet.
+Vor dem Umbau wurde Version 11 (Commit c76fc1924cc81b0316acacf65d69929344df3e42) separat als Quellcode- und Webseiten-ZIP gesichert: outputs/Backups/2026-10-29-Version-11. Ältere Sicherungen bleiben erhalten.
 
-## Überarbeitung nach dem Walkthrough
-
-Die Lichterkette ist ein erkennbares Motiv mit Kabel und Lampen auf derselben Hintergrundebene. Im Bokeh-Lehrbeispiel steht die Person bei 5 m und die Lichterkette bei 30 m. Zwei direkte Fokusknöpfe zeigen scharfe Lampen versus unscharfe Lichtflecken. Das vereinfachte Ein-Lampen-Strahlenschema ergänzt die Hauptkamerazeichnung; Abstände und Fleck sind überzeichnet. Im normalen Tageslichtaufbau sind die Lampen aus.
-
-Die Tour nennt für jeden Schritt eine konkrete Aktion und ihre Beobachtung. Ziel einstellen erklärt, dass ein Beispiel angewendet wurde. Die kompakte Abschlusskarte braucht kein inneres Scrollen. Der Fokusregler und die direkte Fokusgeste enden regulär bei 100 m; alte geteilte Konfigurationen bleiben im Modell lesbar.
-
-Die Demo interpoliert pro Animationsframe; Listenregler erhalten währenddessen Zwischenpositionen. Außerhalb der laufenden Demo gelten ihre diskreten Stufen. Übersetzungen bearbeiten nur geänderte Teilbäume. Vorschauen passen ihre Rastergröße an die Renderkosten an; angehaltene Bilder werden wieder in höherer Auflösung berechnet. Die Bewegungskapitel verwenden einen winkenden Arm bei stehender Person.
-
-Vor dieser Änderung wurde auch Version 10 separat gesichert: outputs/Backups/2026-10-29-Version-10; Commit ff7e569c0b5590aa0ffb5d1f59d183e6070259cc.
-
-Der freie Hintergrund im Bokeh-Beispiel ist eine eigene Aufbaueigenschaft. Ein-/Ausschalten der Lichterkette bewegt keine Bäume oder sonstigen Objekte.
+Das Verzeichnis dist/ kann auf einem statischen Hoster liegen. Das portable Paket legt die Dateien im Wurzelverzeichnis ab und enthält .nojekyll für GitHub Pages. Die Sites-Identität in .openai/hosting.json bleibt an das bestehende Projekt gebunden.
