@@ -26,13 +26,13 @@ Tour & Demo öffnet eine eigene Ansicht mit eigenen Reglern und Canvas-Flächen.
 
 Die geführte Tour hat acht Kapitel: Fokus, Blende, Brennweite, Bewegungsunschärfe, wenig Licht/Automatik, eigene Lichtquellen, Lamellen/Bokeh und Verschluss. Sie beginnt mit einem Fokusregler und fügt die jeweils benötigten Einstellungen hinzu. Aufnahmebild und Kameraschnitt bleiben im Blick; Raum und Verschlussdetail erscheinen nur in passenden Kapiteln. Aufgaben haben konkrete Zahlenziele. Ziel einstellen kennzeichnet das angewendete Beispiel ausdrücklich.
 
-Die Demo hat neun Kapitel und dauert etwa 2:25 Minuten. Ihr Zeiger folgt dem tatsächlich sichtbaren Regler. Weiche Übergänge sind direkt wählbar und standardmäßig aktiv. Pause hält Einstellung und Bewegungszeit an; manuelle Änderungen pausieren die automatische Einstellung. Der separate Winken-Schalter kann anschließend die Motivbewegung starten, während die automatische Reglerfahrt pausiert bleibt. Die Verschlussfolge zeigt erst einen langsamen und dann einen schnellen vollständigen Ablauf.
+Die Demo hat neun Kapitel mit zusammen etwa 2:25 Minuten Abspielzeit. Nach jedem Kapitel hält sie an. Weiter startet erst nach einem Klick; Wiederholen setzt nur das aktuelle Kapitel zurück. Ihr Zeiger folgt dem tatsächlich sichtbaren Regler. Weiche Übergänge sind direkt wählbar und standardmäßig aktiv. Pause hält Einstellung und Bewegungszeit an; manuelle Änderungen pausieren die automatische Einstellung. Der separate Winken-Schalter kann anschließend die Motivbewegung starten, während die automatische Reglerfahrt pausiert bleibt. Die Verschlussfolge zeigt erst einen langsamen und dann einen schnellen vollständigen Ablauf.
 
 ## Blende und Verschluss vertiefen
 
 Optik öffnet das Blenden-/Bokeh-Labor oder den Verschluss. Das Bokeh-Beispiel enthält eine Person bei 5 m und eine erkennbare Lichterkette bei 30 m. Zwischen Person und Lampen fokussieren, Öffnung und gerundete Lamellen vergleichen. Frühere Formmasken bleiben lesbar, werden im Einstieg aber nicht angeboten.
 
-Der Verschluss zeigt Öffnen, Belichten und Schließen als einzeln anwählbare Phasen. Die Lernzeitlupe dehnt Phasen unterschiedlich, damit Vorhangbewegungen auch bei langen Belichtungszeiten sichtbar bleiben. Reale Zeitverhältnisse ist ein zusätzlicher Vergleich. Die Positionen selbst stammen weiter aus dem physikalischen Zwei-Vorhang-Modell mit beispielhafter Laufzeit 4 ms. Die Belichtungszeit gilt für jede Zeile, nicht für die Gesamtdauer des Durchlaufs. Eine Folge endet nach dem Schließen und springt nicht unbemerkt zum Anfang.
+Der Verschluss zeigt Öffnen, Belichten und Schließen als einzeln anwählbare Phasen. Kurze Verschlusszeiten werden gleichmäßig verlangsamt; bei langen Zeiten wird nur die Wartezeit zwischen den beiden gleich schnellen Vorhangfahrten verkürzt. Die dunklen Abdeckungen sind als erster und zweiter Vorhang beschriftet, der freiliegende Sensor grün. Reale Zeitverhältnisse ist ein zusätzlicher Vergleich. Die Positionen selbst stammen weiter aus dem physikalischen Zwei-Vorhang-Modell mit beispielhafter Laufzeit 4 ms. Die Belichtungszeit gilt für jede Zeile, nicht für die Gesamtdauer des Durchlaufs. Eine Folge endet nach dem Schließen und springt nicht unbemerkt zum Anfang.
 
 ## Korrektur von Tiefenreihenfolge und Wiedergabe
 
@@ -40,9 +40,9 @@ Die Szenenobjekte werden vor dem Zeichnen nach Entfernung sortiert. Dadurch verd
 
 ## Prüfung und Grenzen
 
-`node verify.mjs`: 74 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
+`node verify.mjs`: 76 Modellprüfungen plus 352.944 manuelle Parameterkombinationen und 1.152 Automatik-/Lichtfälle.
 
-`node verify-ui.mjs` bzw. `npm run test:ui`: 21 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
+`node verify-ui.mjs` bzw. `npm run test:ui`: 23 isolierte DOM-/Komponententestgruppen mit Happy DOM und Skia. Entwicklungsabhängigkeiten sind nicht Teil des veröffentlichten Browsercodes. Die Prüfungen decken Bedienung, Wiederherstellung, alle Kapitel, kontinuierliche Regler, Sprache/Theme, Galerie und neue Lichtwerte ab. Sie bestätigen kein CSS-Layout.
 
 Am 29.10.2026 war die Browsersteuerung wieder erreichbar. Der Lernraum, das manuelle Winken in einer pausierten Demo, die mobile Kameraansicht sowie die Verschlussphasen wurden im integrierten Browser praktisch geprüft (1280 × 720 und 390 × 844). Die frühere Schnittstellenmeldung „Local browser use is disabled in Work settings“ belegt keine bewusste Einstellungsänderung durch den Nutzer. Eine feste Bildrate auf jedem Gerät wird nicht zugesichert.
 
@@ -57,3 +57,15 @@ Vor der Korrektur wurde auch Version 12 (Commit a1edf87836f6d158eb899319bfbc5c36
 Vor dem Umbau wurde Version 11 (Commit c76fc1924cc81b0316acacf65d69929344df3e42) separat als Quellcode- und Webseiten-ZIP gesichert: outputs/Backups/2026-10-29-Version-11. Ältere Sicherungen bleiben erhalten.
 
 Das Verzeichnis dist/ kann auf einem statischen Hoster liegen. Das portable Paket legt die Dateien im Wurzelverzeichnis ab und enthält .nojekyll für GitHub Pages. Die Sites-Identität in .openai/hosting.json bleibt an das bestehende Projekt gebunden.
+
+## Layout, Didaktik und Lamellen · Überarbeitung
+
+Die fünf Bereiche besitzen dezente eigene Kopffarben. Kamera-Beschreibung und ihre Leerzeile sind entfernt; der erste Bauteilregler heißt Brennweite. Die Fokusdetails bleiben auch mit drei Motivpunkten im Canvas. Der Lichtbereich hat umbruchfreie englische Bezeichnungen, reservierte Höhe und einen Scroll-Fallback. Übungsaufgaben benutzen wieder eigenständige Kartenstile, getrennt vom Tour-Hinweis.
+
+Die Demo stoppt kapitelweise. Dolly-Zoom ist ausdrücklich benannt. Das Fensterkapitel vergleicht selbstleuchtende Motive mit beleuchteten Flächen; der Nachtaufbau bietet einen Vergleich zwischen längerer Belichtung mit niedriger ISO und kurzer Zeit zum Einfrieren von Bewegung. Reglerausgaben haben stabile, umbruchfreie Werteflächen.
+
+Die sichtbaren Lamellenflächen folgen genau der Pupillenkontur, die auch die geometrischen Lichtflecken bestimmt. Die Kontur wird nicht nachträglich über unpassende Lamellen gezeichnet. Der vereinfachte Aufbau zeigt sichtbare Flächen, keine gerätespezifische Gelenkmechanik. Pixeltests vergleichen die tatsächlich gezeichnete Öffnung mit der optischen Kontur. Im Lernraum gibt es eine vergrößerte Gegenüberstellung von Lamellen und Lichtfleck.
+
+Die bewegte Vorschau hat eine höhere Untergrenze für ihre Rasterauflösung; die vorhandene adaptive Begrenzung bleibt erhalten. Eine garantierte Bildrate oder eine vollständige Wellenoptik-Simulation ist damit nicht verbunden.
+
+Fachliche Quellen: [Nikon · Rounded Diaphragm](https://imaging.nikon.com/imaging/lineup/lens/glossary/), [Sony · Verschlussstruktur](https://support.d-imaging.sony.co.jp/support/ilc/flicker/01/en/).

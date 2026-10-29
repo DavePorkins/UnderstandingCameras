@@ -1,4 +1,6 @@
 export const translations={
+ "Übungsaufgaben":"Practice tasks", "1 · Brennweite":"1 · Focal length", "Fokuslage · vergrößert":"Focus detail · enlarged",
+ "Die Tour erklärt die Grundlagen. Hier löst du acht eigenständige Aufgaben im freien Labor – mit Ziel, Hinweis und Lösung.":"The tour introduces the basics. Here you solve eight independent tasks in the free lab, with a goal, hint and solution.",
  "Vorschau läuft, aber alle Tempos stehen auf 0. Unter Licht & Bewegung ein Tempo erhöhen.": "Preview is running, but all motion speeds are 0. Increase a speed under Light & motion.",
  "Eigenhelligkeit der Fenster · +1 EV = doppelt so hell":"Window emission · +1 EV = twice as bright", "Eigenhelligkeit der Lampen · +1 EV = doppelt so hell":"Bulb emission · +1 EV = twice as bright",
  "Lichterkette":"String lights", "Fensterhelligkeit":"Window brightness", "Lichterkettenhelligkeit":"String-light brightness", "Zu Englisch wechseln":"Switch to English",

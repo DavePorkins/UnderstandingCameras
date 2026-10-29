@@ -10,10 +10,10 @@ function stroke(c,points,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash
 function textAt(c,t,x,y,size,color=colors.ink,align='center'){c.fillStyle=diagramColor(color);c.font=`${diagramMobile?Math.max(size,10*diagramRatio):size}px system-ui,sans-serif`;c.textAlign=align;c.fillText(tr(t),x,y);}
 function dot(c,x,y,r,color){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=diagramColor(color);c.fill();}
 function rect(c,x,y,w,h,color,r=0){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=diagramColor(color);c.fill();}
-function setup(canvas){diagramDark=typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';diagramMobile=typeof document!=='undefined'&&document.documentElement.dataset.layout==='mobile';diagramRatio=diagramMobile?canvas.width/Math.max(1,canvas.getBoundingClientRect().width):1;Object.assign(colors,diagramDark?darkColors:lightColors);const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=W/900;c.clearRect(0,0,W,H);c.fillStyle=diagramColor('#f4f6eb');c.fillRect(0,0,W,H);return {c,W,H,k};}
+function setup(canvas){diagramDark=typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';diagramMobile=typeof document!=='undefined'&&document.documentElement.dataset.layout==='mobile';diagramRatio=diagramMobile?canvas.width/Math.max(1,canvas.getBoundingClientRect().width):1;Object.assign(colors,diagramDark?darkColors:lightColors);const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height,k=Math.min(W/900,H/520);c.clearRect(0,0,W,H);c.fillStyle=diagramColor('#f4f6eb');c.fillRect(0,0,W,H);return {c,W,H,k};}
 export const raySubjects={person:{name:'Person',color:'#c06d55',height:.6},plant:{name:'Pflanze',color:'#739363',height:-.1},background:{name:'Hintergrund',color:'#6d8fa6',height:1.25}};
 export function cutawayGeometry(W,H,state){
- const m=metrics(state),s=m.s,k=W/900,cy=H*.35,half=Math.min(H*.19,W*.14);
+ const m=metrics(state),s=m.s,k=Math.min(W/900,H/520),cy=H*.35,half=Math.min(H*.19,W*.14);
  const front=W*clamp(.27-.045*Math.log2(s.focal/50),.17,.38),rear=W*(.51-clamp((m.v-s.focal)/s.focal,0,2)*.06),iris=front+(rear-front)*.52,sensor=W*.78,shutter=W*.72,gain=W*.875,ys=half/40,sensorHeight=m.sensor.h*ys;
  const parts=[{key:'focal',x:front,y:cy,w:34*k,h:half*2+16*k},{key:'aperture',x:iris,y:cy,w:34*k,h:half*2+16*k},{key:'focus',x:rear,y:cy,w:34*k,h:half*2+16*k},{key:'time',x:shutter,y:cy,w:30*k,h:half*2+16*k},{key:'iso',x:gain,y:cy,w:66*k,h:54*k}];
  return {front,rear,iris,sensor,shutter,gain,ys,cy,half,sensorHeight,parts,bodyRight:W*.975};
@@ -34,7 +34,7 @@ export function drawCutaway(canvas,state,{active='aperture',hovered=null}={}){
  for(const[x,r]of[[front,half*.96],[rear,half*.82]]){c.beginPath();c.ellipse(x,cy,11*k,r,0,0,7);c.fillStyle='#86bea03b';c.fill();c.strokeStyle='#6aa58b';c.lineWidth=2*k;c.stroke();}
  const section=pupilSection(s),openingTop=clamp(section[1]*cam.irisDiameter*ys/2,1.5*k,half*.88),openingBottom=clamp(-section[0]*cam.irisDiameter*ys/2,1.5*k,half*.88);rect(c,iris-4*k,cy-half,8*k,half-openingTop,colors.ink);rect(c,iris-4*k,cy+openingBottom,8*k,half-openingBottom,colors.ink);
  const sh=g.sensorHeight;stroke(c,[[sensor,cy-sh/2],[sensor,cy+sh/2]],colors.teal,1.2*k);dot(c,sensor,cy-sh/2,2*k,colors.teal);dot(c,sensor,cy+sh/2,2*k,colors.teal);
- rect(c,shutter-8*k,cy-half+5*k,16*k,half*.33,'#617e70');rect(c,shutter-8*k,cy+half-half*.33-5*k,16*k,half*.33,'#b69a62');for(let i=1;i<4;i++){stroke(c,[[shutter-8*k,cy-half+5*k+i*half*.08],[shutter+8*k,cy-half+5*k+i*half*.08]],'#d2dbc266',k);stroke(c,[[shutter-8*k,cy+half-5*k-i*half*.08],[shutter+8*k,cy+half-5*k-i*half*.08]],'#e7d2a966',k);}
+ rect(c,shutter-8*k,cy-half+5*k,16*k,half*.33,'#303638');rect(c,shutter-8*k,cy+half-half*.33-5*k,16*k,half*.33,'#555b5e');for(let i=1;i<4;i++){stroke(c,[[shutter-8*k,cy-half+5*k+i*half*.08],[shutter+8*k,cy-half+5*k+i*half*.08]],'#d2dbc266',k);stroke(c,[[shutter-8*k,cy+half-5*k-i*half*.08],[shutter+8*k,cy+half-5*k-i*half*.08]],'#e7d2a966',k);}
  textAt(c,'Sensor',sensor,cy-sh/2-9*k,font*.8,colors.teal);
  for(const [i,p]of parts.entries())textAt(c,String(i+1),p.x,cy+half+26*k,font*.9,p.key==='aperture'?colors.amber:colors.teal);
  if(s.body==='dslr')stroke(c,[[rear+40*k,cy-half+15*k],[shutter-25*k,cy-half+15*k]],'#8c9e89',4*k);
@@ -45,11 +45,11 @@ export function drawCutaway(canvas,state,{active='aperture',hovered=null}={}){
  textAt(c,'Signal',gain,cy-30*k,13*k,colors.muted);
  const lower=H*.81,r=Math.min(H*.09,38*k);drawIris(c,W*.10,lower,r,s,{dark:diagramDark});
  textAt(c,`ƒ/${Number(s.aperture.toFixed(1))}`,W*.19,lower-font*.08,font,colors.amber,'left');textAt(c,`Pupille ${m.apertureDiameter.toFixed(1)} mm`,W*.19,lower+font*.9,font*.72,colors.muted,'left');
- textAt(c,`${shutterText(s.time)} · ISO ${Math.round(s.iso)}`,W*.76,H*.65,font*.8,colors.muted);
+
  const optics=targets.map(id=>({id,meta:raySubjects[id],opt:cameraModel(state,{distance:actorDistance(s,id),pointHeight:raySubjects[id].height})}));
  const largest=Math.max(.05,...optics.map(v=>Math.abs(v.opt.conjugateZ-v.opt.sensorZ))),lensX=W*.61,sx=W*.78,span=W*.095;
- textAt(c,'Fokuslage · Längsmaßstab vergrößert',W*.73,H*.715,font*.68,colors.muted);
- optics.forEach(({id,meta,opt},i)=>{const yy=H*(targets.length===1?.85:.78+i*.084),delta=opt.conjugateZ-opt.sensorZ,ix=sx+delta/largest*span,end=W*.90;
+ textAt(c,'Fokuslage · vergrößert',W*.73,H*.655,font*.68,colors.muted);
+ optics.forEach(({id,meta,opt},i)=>{const yy=H*(targets.length===1?.82:.72+i*.09),delta=opt.conjugateZ-opt.sensorZ,ix=sx+delta/largest*span,end=W*.90;
   stroke(c,[[sx,yy-11*k],[sx,yy+11*k]],colors.teal,k);
   for(const sign of[-1,1]){const y0=yy+sign*8*k,yend=yy+sign*8*k*(1-(end-lensX)/(ix-lensX));stroke(c,[[lensX,y0],[ix,yy],[end,yend]],meta.color,1.2*k);}
   dot(c,ix,yy,2*k,meta.color);textAt(c,meta.name,W*.53,yy+3*k,14*k,meta.color);
