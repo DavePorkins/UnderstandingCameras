@@ -1,5 +1,9 @@
 # Kamera verstehen · Lernraum und freies Labor
 
+**Live auf GitHub Pages:** https://daveporkins.github.io/UnderstandingCameras/
+
+Pages veröffentlicht die Anwendung aus `dist/` über den Workflow **Publish GitHub Pages**. Aktualisierungen werden unter **Actions → Publish GitHub Pages → Run workflow** gestartet. Den Repository-Hauptordner nicht als Branch-Quelle veröffentlichen: Dort liegen die Dokumentation und der Übergabeauftrag. Details: [PUBLISHING.md](PUBLISHING.md).
+
 Browserbasiertes Lehrlabor für digitale Fotografie. Deutsch und Englisch; helles und dunkles Farbschema. Statisches Hosting ohne Analyse-Tracker und ohne Kamera- oder Mikrofonberechtigung.
 
 ## Start

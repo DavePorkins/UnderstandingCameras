@@ -2,6 +2,12 @@
 
 Der vollständige Browsercode liegt in `dist/`. Er braucht keinen Build, keine Serverfunktionen und keine API-Schlüssel. `index.html` muss zusammen mit den übrigen Dateien und dem Ordner `vendor/` veröffentlicht werden.
 
+## Aktuelle Veröffentlichung
+
+GitHub Pages ist seit 1. November 2026 auf **GitHub Actions** eingestellt. Die Adresse lautet https://daveporkins.github.io/UnderstandingCameras/ . Der Workflow **Publish GitHub Pages** veröffentlicht ausschließlich `dist/`. Zum Aktualisieren genügt **Actions → Publish GitHub Pages → Run workflow** auf `main`.
+
+Die frühere Branch-Veröffentlichung aus dem Repository-Hauptordner zeigte Dokumentation statt der Anwendung. Nicht auf **Deploy from a branch / main / root** zurückstellen.
+
 ## Bestehende ChatGPT-Sites-Seite
 
 - Ziel: https://kamera-verstehen.daveporkins.chatgpt.site/
