@@ -36,7 +36,7 @@ export function initMobile({onResize,onControl,onRoomSelect,onSettings}){
    move(document.querySelector('.scene-panel'),byId('mobile-panel-light'));
    move(byId('active-experiment'),byId('mobile-task-host'));
    move(document.querySelector('.topbar nav'),byId('mobile-navigation'));
-   for(const id of['reset','share','gallery-open','fullscreen','lesson-current'])move(byId(id),byId('mobile-actions'));
+   for(const id of['share','gallery-open','fullscreen','lesson-current'])move(byId(id),byId('mobile-actions'));
    for(const el of[byId('metrics'),byId('photo-help'),byId('snapshot'),byId('compare')])move(el,byId('mobile-photo-options-host'));
    selectTab(tab);
   }else{active=false;root.dataset.layout='desktop';restore(home);configuration.remove();quick.remove();roomQuick.remove();shell.hidden=true;desktop.hidden=false;if(options.open)options.close();}

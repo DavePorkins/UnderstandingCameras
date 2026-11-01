@@ -595,3 +595,16 @@ input[type=range]{touch-action:pan-y}
  :root[data-layout=mobile] #mobile-shell:not([hidden]){overflow-y:auto}
  :root[data-layout=mobile] #mobile-workarea{flex:none;height:300px;min-height:260px}
 }
+
+/* Keep reset reachable in the mobile header, including narrow phones. */
+:root[data-layout=mobile] #reset>span{display:none}
+:root[data-layout=mobile] #theme-toggle>span:last-child{display:none}
+:root[data-layout=mobile] .tools #language{min-width:56px}
+:root[data-layout=mobile] .tools #layout-menu{min-width:36px}
+/* Only touch-capable devices need the hit surface; mouse/keyboard stay native. */
+.touch-range{position:relative;display:block;min-width:0;width:100%}
+.touch-range-surface{display:none}
+.light-source-row>.touch-range:not(:has(#lampEV)){grid-column:2/4}
+@media(any-pointer:coarse){
+ .touch-range-surface{display:block;position:absolute;inset:0;touch-action:pan-y;cursor:ew-resize}
+}

@@ -14,7 +14,7 @@ Die frühere Branch-Veröffentlichung aus dem Repository-Hauptordner zeigte Doku
 - Bestehende Projektkennung: `appgprj_6ae132dc11a88191add5d6e250397cd9`
 - Hosting-Konfiguration: `.openai/hosting.json`
 - Statischer Ordner: `dist`
-- Seminarfassung: 17, Stand 1. November 2026
+- Seminarfassung: 18, Stand 1. November 2026
 
 Die Konfiguration beschreibt das bestehende Ziel. Sie ist kein Zugangsschlüssel. Ein anderer Chat/Account muss eine passende Sites-Veröffentlichungsfunktion und Zugriff auf dieses Projekt besitzen. Ob das mit einem anderen Account möglich ist, wurde nicht bestätigt. Falls der Zugriff fehlt, nicht unbeabsichtigt ein neues Projekt unter einer anderen Adresse anlegen.
 
@@ -50,4 +50,4 @@ npm test
 npm run test:ui
 ```
 
-Dann `http://localhost:8000` öffnen. Testabhängigkeiten werden nur für die Entwicklung benötigt; sie werden nicht mit der Webseite ausgeliefert. Die Tests bestehen aus 76 Modellprüfungen plus Parameterkombinationen und 30 DOM-/Komponentengruppen. Browserprüfungen der Seminarfassung sind im Projektarbeitsordner dokumentiert.
+Dann `http://localhost:8000` öffnen. Testabhängigkeiten werden nur für die Entwicklung benötigt; sie werden nicht mit der Webseite ausgeliefert. Die Tests bestehen aus 76 Modellprüfungen plus Parameterkombinationen und 31 DOM-/Komponentengruppen. Browserprüfungen der Seminarfassung sind im Projektarbeitsordner dokumentiert.
