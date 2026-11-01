@@ -1,4 +1,5 @@
 export const translations={
+"Bildhilfen":"Image aids",
  "Fein prüfen · 2 Sensorpixel":"Fine check · 2 sensor pixels",
  "Was bedeutet der Schärfemaßstab?":"What does the sharpness criterion mean?",
  "Das Foto verändert sich dabei nicht. Der grüne Bereich im Raum zeigt, was wir als „scharf genug“ zählen. Beim feinen Maßstab darf ein unscharfer Punkt nur zwei Sensorpixel breit sein. Das entspricht genauerem Hinsehen, etwa bei starker Vergrößerung – nicht einer zusätzlichen Fokussierung.":"The photo itself does not change. The green scene range shows what we count as sharp enough. The fine criterion allows a blurred point to span only two sensor pixels. Think of inspecting a larger enlargement: this evaluates sharpness more closely, without refocusing the camera.",

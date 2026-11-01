@@ -7,6 +7,8 @@ import {qrcode} from './vendor/qrcode.mjs';
 import {readGallery,writeGallery,exportGallery,importGallery} from './gallery.mjs';
 import {setLanguage,getLanguage,translateDOM} from './i18n.mjs';
 import {initMobile} from './mobile.mjs';
+import {initTouchRanges} from './touch-ranges.mjs';
+initTouchRanges();
 import {createOptics} from './optics.mjs';
 import {createGuide} from './guide.mjs';
 import {stopValue,stopPosition} from './physics.mjs';
@@ -87,7 +89,8 @@ function update(transient=false){
  const automatic={aperture:s.mode==='S'||s.mode==='P'||s.sensor==='phone',time:s.mode==='A'||s.mode==='P',iso:s.autoISO||s.mode==='P',focus:s.autoFocus,wb:s.autoWB};
  for(const d of definitions){const value=s[d.key],el=$(d.key);el.step=d.list?(['focal','aperture'].includes(d.key)?0.01:1):d.step;el.value=d.list?(['focal','aperture'].includes(d.key)?stopPosition(d.list,value):d.list.indexOf(nearest(d.list,value))):value;$(`out-${d.key}`).textContent=d.format(value);el.setAttribute('aria-valuetext',d.format(value));el.disabled=Boolean(automatic[d.key])||(d.key==='comp'&&s.mode==='M'&&!s.autoISO);}
  document.querySelectorAll('[data-auto]').forEach(b=>{const key=b.dataset.auto;b.classList.toggle('active',Boolean(automatic[key]));b.setAttribute('aria-pressed',String(Boolean(automatic[key])));b.disabled=key==='aperture'&&s.sensor==='phone';b.textContent=b.disabled?'fest':key==='focus'?'AF':'Auto';});
- for(const key of['matchFrame','tripod','stabilization','portrait','grid','zebra','peaking','motion','lampOn','windowsOn','bokehLights'])$(key).checked=state[key];$('portrait').disabled=s.sensor!=='phone';
+ document.documentElement.style.setProperty('--photo-aspect',m.sensor.w/m.sensor.h);
+ for(const key of['matchFrame','tripod','stabilization','portrait','grid','zebra','peaking','motion','lampOn','windowsOn','bokehLights'])$(key).checked=state[key];$('portrait').disabled=s.sensor!=='phone';$('motion').nextElementSibling.textContent=s.motion?'\u2161':'\u25b6';
  document.querySelectorAll('[data-focal]').forEach(b=>b.classList.toggle('selected',Math.abs(Number(b.dataset.focal)-s.focal)<.3));document.querySelectorAll('[data-ray]').forEach(b=>b.checked=s.rayTargets.split(',').includes(b.dataset.ray));document.querySelectorAll('[data-motion]').forEach(b=>b.classList.toggle('active',b.dataset.motion===motionTarget));
  $('motion-label').textContent=motionLabels[motionTarget];$('motion-speed').value=state[motionTarget];$('out-motion-speed').textContent=`${state[motionTarget].toFixed(1)} m/s`;
  const distance=actorDistance(s,roomSelected),validTarget=!['camera','lamp'].includes(roomSelected)&&distance>.3;

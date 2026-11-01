@@ -81,3 +81,12 @@ Raumplan-Texte und Griffe besitzen eine von der Höhe unabhängige Mindestgröß
 Unter Bild & Sensor erläutern ausklappbare Hinweise das Schärfekriterium, Stativ/Stabilisierung und ND. Fein prüfen · 2 Sensorpixel verändert die Bewertung und den grünen Bereich, nicht das optische Foto. Beim Stativvergleich mit 1/4 s empfiehlt die Erklärung Blende auf Auto, damit die Belichtung passt.
 
 24 Bedienungstestgruppen bestehen. Ein zusätzlicher Pixelvergleich bestätigt, dass sich das optische Foto beim Wechsel des Schärfekriteriums nicht ändert, während Stativ und Stabilisierung bei langer Belichtung tatsächlich einen Unterschied machen.
+
+
+## Seminarfassung 17 (lokal, 2026-11-01)
+
+Image switches are now in the photo header. Mobile photos use the full width at the sensor aspect ratio. Touch ranges require a deliberate horizontal drag; taps and vertical swipes keep values unchanged. Task/Why/status occupy stable areas. Reset scene restores each chapter while preserving earned Next access. The aperture chapter shows Auto shutter explicitly. Bright windows now demonstrate real highlight clipping with zebra enabled. The optics ray diagram accepts aperture drag/keyboard input. The shutter chapter gives the curtain view its own full panel and requires completion of the sequence.
+
+Validation: 76 model checks, 352,944 parameter combinations, 1,152 automatic/light cases, 30 DOM/component groups. All eight tour chapters checked in a real browser at 320x740, 390x844, 1280x800 and 1440x900; DE/EN and light/dark represented. Photo bounds stay unchanged after success and Why. Actual mobile touch hardware was not available; pointer-event behaviour is covered by component tests.
+
+The public Sites deployment has not been updated in this session: the Sites publishing integration is unavailable. The offline HTML and deployment archive contain version 17. See outputs/Pruefbericht-Version-17.md in the project workspace for the complete learning review.
